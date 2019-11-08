@@ -82,10 +82,11 @@ data['flag_regionname'] = flag_regionname
 drop_col_second = ['Suburb','Address','Type','Regionname','street_Address']
 
 ## data_final is the final dataset after data processing 
-## flag_suburb means the suburb
-## flag_street_Address means The name of the street where the house is located
-## lag_type means the type of the house( house , unit, apartment)
-## flag_regionname means the region of the house ( north, west, south, east)
+
+## flag_suburb means the suburb after digitzing processing
+## flag_street_Address means The name of the street where the house is located after digitzing processing
+## lag_type means the type of the house( house , unit, apartment) after digitzing processing
+## flag_regionname means the region of the house ( north, west, south, east) after digitzing processing
 
 data_final = data.drop(drop_col_second, axis=1)
 
