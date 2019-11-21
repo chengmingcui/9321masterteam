@@ -1,4 +1,8 @@
 import json
+import ujson
+import jwt
+import datetime
+import re
 
 import pandas as pd
 from flask import Flask
@@ -15,6 +19,13 @@ import machine_learning as ml
 # the API has get list of house_prices
 app = Flask(__name__)
 api = Api(app,
+         authorizations= {"Token-Based":{
+                                "type":"apiKey",
+                                "name":"API-TOKEN",
+                                "in":"header"
+                            }
+          },
+          security = "Token-Based",
           default="Houses",  # the namespace
           title="Melbourne House price dataset",  # the documentation title
           description="This API aims to predict the house price in Melbourne Australia.\n Once you provide some details about your house, a predict price of your"
@@ -51,7 +62,55 @@ user_model = api.model("User",{
     "Password": fields.String
 })
 
+auth_parser = reqparse.RequestParser()
+auth_parser.add_argument('username', required = True)
+auth_parser.add_argument('password', required = True)
+SECRET_KEY = "jalsdncoih2o342oisdcnvsl290384cvkjwmenzoxi2361298smndclzcse"
+def requires_auth(f):
+    def decorated(*args, **kwargs):
+        token = request.headers.get("API-TOKEN")
+        if not token:
+            abort(401,'Authentication token is missing')
+        try:
+            ujson.dumps(jwt.decode(token,SECRET_KEY))
+        except Exception as e:
+            abort(401,message=e)
 
+        return f(*args, **kwargs)
+    return decorated
+
+@api.route('/authentication-tokens')
+class Authentication(Resource):
+    @api.response(200, 'Successful')
+    @api.doc(description="Generates a authentication token")
+    @api.expect(auth_parser,validate=True)
+    def post(self):
+        args = auth_parser.parse_args()
+        user_data = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
+        if not args:
+            abort(400,message="username and password needed")
+        username = args.get("username")
+        password = args.get("password")
+        print(user_data.Username)
+        print(username)
+        if username in user_data["Username"].values:
+            user_id = user_data[(user_data["Username"] == username)].index
+            #user_info = user_data.loc[user_id]
+            print(user_data.loc[user_id,"Password"].values)
+            print(password)
+            if password == user_data.loc[user_id,"Password"].values:
+                payload = {
+                    "username":username,
+                    "role":"admin",
+                    "exp" : datetime.datetime.utcnow() + datetime.timedelta(seconds= 600)
+                }
+
+                token = jwt.encode(payload,SECRET_KEY)
+                return token
+            else:
+                abort(400,message="password is not correct")
+        else:
+            abort(400,message="username is not registered")
 #for user to create  a new account (username and password) , do update their account information and delete their account
 #the operations do in user_accounts.csv file
 @api.route("/users")
@@ -63,18 +122,31 @@ class Registration(Resource):
     @api.expect(user_model,validate = True)
     def post(self):
         user = request.json
+        user_data = pd.read_csv("user_accounts.csv",usecols=["UserID","Username","Password"])
+        user_data["Password"]
         if ("UserID" not in user) or ("Username" not in user ) or ("Password" not in user):
             abort(400, message= "Username and Password are needed")
-        #df = pd.read_csv("user_accounts.csv")
-        if user["Username"] in list(df_user["Username"]):
+        print(list(user_data["Username"]))
+        if user["Username"] in list(user_data["Username"]):
             abort(400,message = "Username already exist, create a new one")
 
         #add this valid user account (username, password) into csv file
         userID = user["UserID"]
+        pw = user["Password"]
+        if not (re.search('.*[A-Z]+.*',pw) or re.search('.*[a-z]+.*',pw)):
+            abort(400, message="Password should not onlu figure")
         for key in user:
             if key not in user_model.keys():
                 abort(400,"Property {} is invalid".format(key))
             df_user.loc[userID,key] = user[key]
+            user_data.loc[userID,key] = user[key]
+        print(userID)
+        print(df_user)
+        print(user_data)
+
+        #user_data.set_index("UserID")
+        print(user_data)
+        user_data.to_csv("user_accounts.csv")
 
         #df.to_csv("user_accounts.csv")
         return {"message": "UserID is {} has created".format(userID)}, 200
@@ -84,7 +156,7 @@ class Registration(Resource):
 @api.route("/users/<int:id>")
 @api.param("username", "The username of an account created previously")
 class UserAccountsManage(Resource):
-
+    @requires_auth
     def get(self,id):
         #df_user = pd.read_csv("user_accounts.csv")
 
@@ -103,6 +175,7 @@ class UserAccountsManage(Resource):
     @api.response(200, "Success Update")
     @api.doc(description = "User can update its account information about username and password")
     @api.expect(user_model)
+    @requires_auth
     #@api.token_required
     def put(self,id):
 
@@ -126,6 +199,7 @@ class UserAccountsManage(Resource):
     @api.doc(description = "User delete an account")
     @api.response(400, "Invalid username")
     @api.response(200,"Delete successfully")
+    @requires_auth
     #@api.token_required
     def delete(self, id):
         # for user delete their account
@@ -155,6 +229,7 @@ class HousesList(Resource):
     @api.response(200, "Success information retrieval.")
     @api.doc(description="User can get all houses information he or she has provided so far.")
     @api.expect(parser, validate =True)
+    @requires_auth
     #@api.token_required
     def get(self):
         # Since this get operation is for retrieval all houses information of a owner has provided yet, so the
@@ -210,6 +285,7 @@ class HousesList(Resource):
     @api.response(401, "Error: Invalidation post")
     @api.doc(description="Add a new house information, and return the predict price")
     @api.expect(house_model, validate=True)
+    @requires_auth
     #@api.token_required
     def post(self):
         # since post new data for predict price, so accessing dataset here is test dataset
@@ -243,17 +319,18 @@ class HousesList(Resource):
 
 
         #这里调用 machine_learning 的信息可能还是用问题，主要是好想表格的输入输出类型不一致。
-        #result = ml.machine_learning(df) #result has price and index only
+        df1 = ml.data_processing(df)
+        result = ml.machine_learning(df1) #result has price and index only
 
         #for index,row in result.itterows():
            # df.loc[index,"Price"] = result[index,"Price"]#update the houses information in csv file
 
-       # price = df.loc[id,"Price"]
+        price = result.loc[id,"Price"]
 
         #return price, 201
 
         #样品输出
-        return {"message":"The house {} information has been posted".format(id)}, 200
+        return {"message":"The house {} information has been posted and price is {}".format(id,price)}, 200
 
 
 @api.route("/houses/<int:id>")
@@ -267,6 +344,7 @@ class Houses(Resource):
     @api.response(200, " Success: House information update and return new predict price successfully")
     @api.doc(description=" Update information of a house by its Identifier, and return the new predict price")
     @api.expect(house_model)
+    @requires_auth
     #@api.token_required
     def put(self, id):
         # the accessing dataset is test dataset
@@ -302,20 +380,21 @@ class Houses(Resource):
             # remove the user and password columns and send to the subset part to machine learning function
             # remove the user and password columns and send to the subset part to machine learning function
 
-
-        #result = ml.machine_learning(df)  # result has price and index only
+        df1 =ml.data_processing(df)
+        result = ml.machine_learning(df1)  # result has price and index only
         #df.loc[id, "Price"] = result[id, "Price"]  # update the houses information in csv file
        # df.to_csv("user_houses.csv")
-        #price = df.loc[id, "Price"]
+        price = result.loc[id, "Price"]
 
         #return price, 200
-        return {"message":"House {} information has been updated".format(id)}, 200
+        return {"message":"House {} information has been updated and price {}".format(id,price)}, 200
 
 
     @api.response(403, "Error: User has not permission to access a house information")
     @api.response(402, " Error: Invalid House Identifier")
     @api.response(200, "Success: House information delete successfully")
     @api.doc(description="Delete a house and its information from dataset")
+    @requires_auth
     #@api.token_required
     def delete(self, id):
 
@@ -347,7 +426,7 @@ if __name__ == "__main__":
 
     df_user = pd.DataFrame(columns = ["UserID","Username","Password"])
     df_user.set_index("UserID")
-    df_user.to_csv("user_accounts.csv") # this file is used for storing the user's username and password
+    # this file is used for storing the user's username and password
 
 
     app.run(debug=True)
