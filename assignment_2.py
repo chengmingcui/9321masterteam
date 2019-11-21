@@ -57,7 +57,6 @@ house_model = api.model('House', {
 
 
 user_model = api.model("User",{
-    "UserID": fields.Integer,
     "Username": fields.String,
     "Password": fields.String
 })
@@ -122,16 +121,20 @@ class Registration(Resource):
     @api.expect(user_model,validate = True)
     def post(self):
         user = request.json
-        user_data = pd.read_csv("user_accounts.csv",usecols=["UserID","Username","Password"])
-        user_data["Password"]
-        if ("UserID" not in user) or ("Username" not in user ) or ("Password" not in user):
+        df_user["Password"]
+        # if ("UserID" not in user) or ("Username" not in user ) or ("Password" not in user):
+        #     abort(400, message= "Username and Password are needed")
+        if ("Username" not in user ) or ("Password" not in user):
             abort(400, message= "Username and Password are needed")
-        print(list(user_data["Username"]))
-        if user["Username"] in list(user_data["Username"]):
+        print(list(df_user["Username"]))
+        if user["Username"] in list(df_user["Username"]):
             abort(400,message = "Username already exist, create a new one")
-
+        last_user = df_user.tail(1)
+        print(int(last_user["UserID"].values))
+        print(last_user.index)
+        last_index = int(last_user["UserID"].values) + 1
         #add this valid user account (username, password) into csv file
-        userID = user["UserID"]
+        userID = last_index#user["UserID"]
         pw = user["Password"]
         if not (re.search('.*[A-Z]+.*',pw) or re.search('.*[a-z]+.*',pw)):
             abort(400, message="Password should not onlu figure")
@@ -139,14 +142,12 @@ class Registration(Resource):
             if key not in user_model.keys():
                 abort(400,"Property {} is invalid".format(key))
             df_user.loc[userID,key] = user[key]
-            user_data.loc[userID,key] = user[key]
+        df_user.loc[userID,"UserID"] = last_index
         print(userID)
         print(df_user)
-        print(user_data)
 
         #user_data.set_index("UserID")
-        print(user_data)
-        user_data.to_csv("user_accounts.csv")
+        df_user.to_csv("user_accounts.csv", )
 
         #df.to_csv("user_accounts.csv")
         return {"message": "UserID is {} has created".format(userID)}, 200
@@ -397,7 +398,7 @@ class Houses(Resource):
     @requires_auth
     #@api.token_required
     def delete(self, id):
-
+        
         args = parser.parse_args()
 
         user = args.get("UserID")
@@ -424,7 +425,10 @@ if __name__ == "__main__":
     # user (username, password) 存在user_accounts.csv file里面
     df.set_index("Identifier")
 
-    df_user = pd.DataFrame(columns = ["UserID","Username","Password"])
+    #df_user = pd.DataFrame(columns = ["UserID","Username","Password"])
+    # df_user = pd.DataFrame(columns=["Username", "Password"])
+    # df_user.set_index("UserID")
+    df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
     df_user.set_index("UserID")
     # this file is used for storing the user's username and password
 
