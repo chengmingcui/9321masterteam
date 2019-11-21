@@ -12,6 +12,10 @@ from flask_restplus import fields, abort
 from flask_restplus import inputs
 from flask_restplus import reqparse
 import machine_learning as ml
+import Data_for_graph as dg
+
+
+
 
 # assume the dataset which API is going to access is named mel_data.csv
 
@@ -32,6 +36,16 @@ api = Api(app,
                       + "house would be provided to you immediately !",
           version="1.0"
           )
+
+
+
+
+
+
+
+
+
+
 
 # different with the test dataset schema, where it adds columns "Identifier", "User" and "Password"
 # those three columns values do not contribute to predict price.
@@ -152,6 +166,93 @@ class Registration(Resource):
         #df.to_csv("user_accounts.csv")
         return {"message": "UserID is {} has created".format(userID)}, 200
 
+
+parser1 = reqparse.RequestParser()
+parser1.add_argument("graph service", required= True,choices=["graph1", "graph2", "graph3"])
+
+suburb_list = ["Reservoir","Richmond","Brunswick","Bentleigh East","Coburg","Essendon","Preston","Hawthorn","Yarraville","Glenroy","Glen Iris","Pascoe Vale",
+               "Moonee Ponds","St Kilda","Kew","Carnegie","Footscray","South Yarra","Brighton","Northcote","Balwyn North","Elwood","Port Melbourne",
+               "Ascot Vale","Newport","Brighton East","Thornbury","Brunswick West","Camberwell","Malvern East","Prahran","Bentleigh","Keilor East",
+               "Maribyrnong","Kensington","Surrey Hills","Doncaster","Balwyn","Hawthorn East","Hampton","West Footscray","Williamstown","Fawkner","Sunshine West",
+               "Templestowe Lower","Maidstone","Ormond","Ivanhoe","Armadale","Brunswick East","Sunshine","North Melbourne","South Melbourne","Elsternwick",
+               "Toorak","Collingwood","Burwood","Fitzroy North","Moorabbin","Heidelberg Heights","Ashburton","Murrumbeena","Airport West","Seddon",
+               "Abbotsford","Craigieburn","Niddrie","Hadfield","Flemington","Oak Park","Malvern","Fitzroy","Altona","Albert Park","Melbourne","Bulleen",
+               "Werribee","Box Hill","Strathmore","Ashwood","Coburg North","Altona North","Fairfield","Braybrook","Avondale Heights","Windsor","Epping",
+               "Watsonia","Oakleigh South","Canterbury","Rosanna","Oakleigh","Aberfeldie","Sunshine North","Heidelberg West","Clifton Hill","Caulfield South",
+               "Kingsville","Hughesdale","Chadstone","Sunbury","Mount Waverley","Mill Park","Heidelberg","Southbank","Albion","Glen Waverley","Kew East",
+               "Viewbank","Cheltenham","Carlton","West Melbourne","Caulfield North","Lalor","Greensborough","Gowanbrae","Eaglemont","Middle Park","Spotswood",
+               "Bundoora","Doncaster East","Jacana","Croydon","Sandringham","Mont Albert","Yallambie","Alphington","Mitcham","Mulgrave","Hoppers Crossing","Balaclava",
+               "Ivanhoe East","Carlton North","Meadow Heights","South Morang","Keilor Park","Cremorne","St Albans","Parkdale","Essendon West","Dingley Village",
+               "Mentone","Hampton East","Ferntree Gully","Thomastown","South Kingsville","Eltham","Seaford","Essendon North","Hillside","Highett","Wantirna South",
+               "Greenvale","Bayswater","Point Cook","Melton","Parkville","Ringwood East","Broadmeadows","Templestowe","Williamstown North","Frankston South",
+               "Roxburgh Park","Melton South","Blackburn","Boronia","Kealba","Nunawading","Frankston","Eltham North","Vermont","Donvale","Mordialloc","Glen Huntly",
+               "Forest Hill","Keilor Downs","Carrum Downs","Ringwood","Tarneit","Noble Park","Berwick","Clayton","Tullamarine","Heathmont","Dandenong North",
+               "Rowville","Oakleigh East","East Melbourne","Blackburn South","Keysborough","Taylors Hill","Melton West","Edithvale","Bellfield","Montmorency",
+               "Travancore","Caroline Springs","Burwood East","Mooroolbark","Kingsbury","Wheelers Hill","Blackburn North","Gladstone Park","Keilor","Beaumaris",
+               "Taylors Lakes","Gisborne","Scoresby","Burnley","Briar Hill","Brooklyn","Westmeadows","Kings Park","Vermont South","Croydon North","Bayswater North",
+               "Deer Park","Diamond Creek","Delahey","Frankston North","Carrum","Caulfield","Gardenvale","Black Rock","Bonbeach","Doveton","Chelsea Heights","Sydenham",
+               "Endeavour Hills","Watsonia North","Kurunjang","Cairnlea","Clayton South","Huntingdale","Aspendale","Wollert","Chelsea","Mernda","Kilsyth","Dandenong",
+               "Wyndham Vale","Clarinda","Ripponlea","Strathmore Heights","Altona Meadows","Ringwood North","Coolaroo","Springvale","Burnside Heights","Ardeer",
+               "Caulfield East","Narre Warren","Croydon Hills","Doreen","Seaholme","St Helena","Hampton Park","Pakenham","Mount Evelyn","Wantirna","Princes Hill",
+               "Notting Hill","Albanvale","Truganina","Langwarrin","North Warrandyte","Dallas","Riddells Creek","Waterways","Yarra Glen","Sandhurst","Hurstbridge",
+               "McKinnon","Williams Landing","Diggers Rest","The Basin","Cranbourne North","Healesville","Springvale South","Hallam","Beaconsfield Upper","Wallan",
+               "Skye","Montrose","Deepdene","Knoxfield","Emerald","Plumpton","Campbellfield","Cranbourne","Brookfield","Seabrook","Whittlesea","Beaconsfield",
+               "Lower Plenty","Burnside","Kooyong","Warrandyte","Derrimut","Chirnside Park"]
+parser1.add_argument("suburb",choices = suburb_list)
+parser1.add_argument('year', type=float)
+parser1.add_argument("distance", type=float)
+
+
+@api.route('/graphs')
+
+#@api.doc(decsription="Graph1: please submit year\nGrapg2: please submit suburb name and year\nGraph3: please submit distance.")
+class Graph(Resource):
+    @api.param("year", "The year when houses built")
+    @api.param("suburb", "The suburb name in Melbourne")
+    @api.param("distance", "The distance from house to CBD")
+    @api.param("graph service",
+               "Graph1 : present the average house prices in the time range [input_year - 5, input_year +5],please submit year\n"
+               + "Graph2 : present the average house prices in a particular suburb in time range [input_year-5, input_year +5],please submit suburb name and year\n"
+               + "Graph3 : present the top 5 lowest house prices suburb and distance less than the input distance,please submit distance."
+               )
+    @api.expect(parser1, validate=True)
+    @api.response(400,"Error: Invalid input")
+    @api.response(200,"Success")
+    @requires_auth
+    #@api.expect(parser1, validate=True)
+    def get(self):
+        args = parser1.parse_args()
+        graph_service = args.get("graph service")
+        if graph_service == "graph1":
+            if "year" not in args:
+                abort(400, message="year is required")
+            year = args.get("year")
+            if year <= 999:
+                abort(400, message="Invalid year value")
+            graph_df = dg.graph1(year)  # the dataframe of the graph to point
+        elif graph_service == "graph2":
+            if ("suburb" not in args) or ("year" not in args):
+                abort(400, message="year and suburb must required")
+            year = args.get("year")
+            suburb = args.get("suburb")
+            if year <= 999:
+                abort(400, message="Invalid year value")
+            print(year)
+            print(type(year))
+            print(suburb)
+            print(type(suburb))
+            #suburb = str(suburb)
+
+            graph_df = dg.graph2(suburb,year)
+        else:
+            if "distance" not in args:
+                abort(400, message="Distance is required")
+            distance = args.get("distance")
+            graph_df = dg.graph3(distance)
+
+        graph_json = graph_df.to_json(orient='index')
+
+        return graph_json, 200
 
 
 @api.route("/users/<int:id>")
@@ -325,7 +426,7 @@ class HousesList(Resource):
 
         #for index,row in result.itterows():
            # df.loc[index,"Price"] = result[index,"Price"]#update the houses information in csv file
-
+        print(result.to_string())
         price = result.loc[id,"Price"]
 
         #return price, 201
@@ -420,7 +521,8 @@ if __name__ == "__main__":
     df = pd.DataFrame(columns = ["Identifier", "UserID","Distance","Badroom2","Bathroom","Car","Landsize","BuildingArea","YearBuilt","Lattitude",
                                       "Longtitude","Suburb","Street","Type","Regionname"])
     df.to_csv("user_houses.csv")
-
+    # df = pd.read_csv("user_houses.csv", usecols = ["Identifier", "UserID","Distance","Badroom2", "Bathroom","Car","Landsize","BuildingArea","YearBuilt",
+    #                                                "Lattitude","Longtitude","Suburb","Street","Type","Regionname"])
     # 关于house information都存在user_houses.csv file 里面
     # user (username, password) 存在user_accounts.csv file里面
     df.set_index("Identifier")
