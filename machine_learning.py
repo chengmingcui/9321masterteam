@@ -10,7 +10,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import data_processing_machine as dp
+
 
 
 def machine_learning(input):
@@ -43,9 +43,14 @@ def machine_learning(input):
     #         w +=1
     #         identifier.append(w)
     pd_final = pd.DataFrame(final)
+
     pd_final.rename(columns={pd_final.columns[0]: 'Price'}, inplace=True)
+    print("***********input*********************")
+    print(input.to_string())
+    print("******************pd_final***********")
+    print(pd_final.to_string())
     final_csv = input.join(pd_final)
-    final_csv.set_index(["Identifier"], inplace= True)
+    #final_csv.set_index(["Identifier"], inplace= True)
     #     final_csv['Identifier'] = identifier
     #     final_csv = final_csv.set_index(['Identifier'])
     #print(final_csv.to_string())
@@ -89,6 +94,43 @@ def data_processing(input):
 
     return output
 
+if __name__ == "__main__":
+    raw_data = {"Identifier":1,
+                "UserID": 9,
+                "Distance": 12,
+                "Badroom2": 2,
+                "Bathroom": 1,
+                "Car": 1,
+                "Landsize": 100,
+                "BuildingArea": 90,
+                "YearBuilt": 2008,
+                "Lattitude": 130,
+                "Longtitude": 130,
+                "Suburb": "Gelnroy",
+                "Street": "William St",
+                "Type": "t",
+                "Regionname": "Northern Metropolitan"
+                }
+    df1 = pd.DataFrame(
+        columns=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize", "BuildingArea",
+                 "YearBuilt", "Lattitude",
+                 "Longtitude", "Suburb", "Street", "Type", "Regionname"])
 
+
+    # put the value into the dataset
+    for key in raw_data:
+        df1.loc[0, key] = raw_data[key]
+
+
+    print(df1.to_string())
+    df = pd.read_csv("user_houses.csv", usecols=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize", "BuildingArea",
+                 "YearBuilt", "Lattitude",
+                 "Longtitude", "Suburb", "Street", "Type", "Regionname"])
+    print(df.to_string())
+    df =df.append(df1, ignore_index= True)
+    print(df.to_string())
+    # df1 =machine_learning(df)
+    # print(df1.to_string())
+    # print(df1.loc[1,"Price"])
 
 
