@@ -11,7 +11,10 @@ sign_in = function () {
     post_authentication_token(
         $("#username").val(),
         $("#password").val(),
-        function () {
+        function (data) {
+            $.cookie(("user_id", data.user_id, {"path": "/"}));
+            $.cookie(("username", data.username, {"path": "/"}));
+            $.cookie(("token", data.token, {"path": "/"}));
             window.location.replace("/index.html")
         }
     )
@@ -28,14 +31,79 @@ post_authentication_token = function (username, password, on_success) {
         },
         beforeSend: request_add_token,
         success: on_success,
-        fail: function () {
+        error: function () {
             alert("Auth Error");
         }
     });
     return ret_val;
 };
+logout=function(){
+    clean_cookie();
+    window.location.replace("/");
+}
+clean_cookie=function(){
+    $.removeCookie("user_id",{path:"/"});
+    $.removeCookie("username",{path:"/"})
+}
+register=function(){
+    post_register(
+        $("#username").val(),
+        $("#password").val(),
+        function(data){
+            alert(data.message+"\n"+"Return to login page");
+            window.location.replace("/pages/login.html");
+        }
+    )
+}
 
-parse_parse_data=function(){
+post_register = function (username, password, on_success) {
+    $.ajax({
+        type: "POST",
+        url: "/api/users",
+        beforeSend: request_add_token,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify({
+            Username: username,
+            Password: password
+        }),
+        success: on_success,
+        error: function(xhr,error){
+            alert(error+": "+xhr);
+        }
+    })
+};
+
+update_account=function(){
+    post_update_account(
+        $("#username").val(),
+        $("#password").val(),
+        function(data){
+            alert(data.message);
+        }
+    )
+}
+
+post_update_account= function (user_id, username, password, on_success) {
+    $.ajax({
+        type: "POST",
+        url: "/api/users/"+$.cookie("user_id"),
+        beforeSend: request_add_token,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify({
+            Username: username,
+            Password: password
+        }),
+        success: on_success,
+        error: function(xhr,error){
+            alert(error+": "+xhr);
+        }
+    })
+}
+
+
+parse_predict_data = function () {
 
     return {
         "Identifier": parseInt($("#Identifier").val()),
@@ -51,47 +119,55 @@ parse_parse_data=function(){
         "Longtitude": parseFloat($("#Longitude").val()),
         "Suburb": $("#Suburb").val(),
         "Street": $("#Street").val(),
-        "Type":$("#Type").val(),
-        "Regionname":$("#Regionname").val(),
-        "Predicted_Price":0.0,
+        "Type": $("#Type").val(),
+        "Regionname": $("#Regionname").val()
+        // "Predicted_Price": 0.0,
     };
 };
 
-predict = function () {
-    post_houses_predict(parse_parse_data(),function (data) {
-        console.log(data);
-    })
-}
-
-post_houses_predict = function (data, on_success) {
-    $.ajax({
+predict_houses_price = function () {
+    return $.ajax({
         type: "POST",
         url: "/api/houses",
-        data: data,
+        data: JSON.stringify(parse_predict_data()),
         beforeSend: request_add_token,
-        success: on_success,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            $("#PredictResultTable").prepend(
+                "<tr>" +
+                "<td><p>" + data.HouseID + "</p></td>" +
+                "<td><p>$ " + data.price + "</p></td>" +
+                "</tr>"
+            );
+            houseid.val(parseInt(houseid.val()) + 1);
+            console.log(data);
+        },
+        error: function (data, error) {
+            alert(error + ":" + data.message);
+        }
     });
 };
 
 load_feature_range = function () {
     feature_range = {};
-    on_success=function(data){
-        for (var  v in  data["suburb"]){
-            s+="<option>"+data["suburb"][v]+"</option>"+"\n";
+    on_success = function (data) {
+        for (var v in  data["suburb"]) {
+            s += "<option>" + data["suburb"][v] + "</option>" + "\n";
         }
         $("#Suburb").html(s);
-        s=""
-        for (var  v in  data["street"]){
-            s+="<option>"+data["street"][v]+"</option>"+"\n";
+        s = ""
+        for (var v in  data["street"]) {
+            s += "<option>" + data["street"][v] + "</option>" + "\n";
         }
         $("#Street").html(s);
-        s=""
-        for (var  v in  data["region"]){
-            s+="<option>"+data["region"][v]+"</option>"+"\n";
+        s = ""
+        for (var v in  data["region"]) {
+            s += "<option>" + data["region"][v] + "</option>" + "\n";
         }
         $("#Regionname").html(s);
     };
 
     $.getJSON("../js/9321/data.json", on_success);
-    s=""
+    s = ""
 }

@@ -36,18 +36,18 @@
                     </div>
                     <div class="col-xl-4 col-lg-6 col-md-7 my-auto p-0">
                         <div class="authentication-form mx-auto">
-                            <div class="logo-centered">
-                                <a href="../index.html"><img src="../src/img/brand.svg" alt=""></a>
+                            <div class="logo-left col-md-6">
+                                <a href="../"><img src="../src/img/brand.png" class=".img-fluid" alt=""></a>
                             </div>
                             <h3>New to Melbourne House Predict Center</h3>
                             <p>Join us today! It takes only few steps</p>
-                            <form action="../index.html">
+                            <form >
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Username" required="true">
+                                    <input type="text" class="form-control" placeholder="Username" id="username" required="true">
                                     <i class="ik ik-user"></i>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="Password" required="true">
+                                    <input type="password" class="form-control" placeholder="Password" id="password" required="true">
                                     <i class="ik ik-lock"></i>
                                 </div>
                                 <!--<div class="form-group">
@@ -63,7 +63,7 @@
                                     </div>
                                 </div>
                                 <div class="sign-btn text-center">
-                                    <button class="btn btn-theme">Create Account</button>
+                                    <button class="btn btn-theme" onclick="register()">Create Account</button>
                                 </div>
                             </form>
                             <div class="register">
@@ -77,6 +77,7 @@
         
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script>window.jQuery || document.write('<script src="../src/js/vendor/jquery-3.3.1.min.js"><\/script>')</script>
+        <script src="../src/js/vendor/jquery.cookie-1.4.1.js"></script>
         <script src="../plugins/popper.js/dist/umd/popper.min.js"></script>
         <script src="../plugins/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="../plugins/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script>
@@ -91,5 +92,7 @@
             r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
             ga('create','UA-XXXXX-X','auto');ga('send','pageview');
         </script>
+        <script src="../js/9321/predictor.js"></script>
+
     </body>
 </html>
