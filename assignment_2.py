@@ -108,6 +108,17 @@ class Authentication(Resource):
             # user_info = user_data.loc[user_id]
             print(df_user.loc[user_id, "Password"].values)
             print(password)
+            if df_log.empty:
+                last_index = 0
+            else:
+                last_file = df_log.tail(1)
+                last_index = int(last_file["ID"].values) + 1
+            logID = last_index
+            df_log.loc[logID, "ID"] = last_index
+            df_log.loc[logID, "UserID"] = user_id
+            df_log.loc[logID, "Operation"] = "login"
+            df_log.loc[logID, "Time"] = get_time
+            df_log.to_csv("log_file.csv")
             if password == df_user.loc[user_id, "Password"].values:
                 payload = {
                     "username": username,
@@ -119,19 +130,7 @@ class Authentication(Resource):
                 return token
             else:
                 abort(400, message="password is not correct")
-            if df_log.empty:
-                last_index = 0
-            else:
-                last_file = df_log.tail(1)
-                print(int(last_file["ID"].values))
-                print(last_file.index)
-                last_index = int(last_file["ID"].values) + 1
-            logID = last_index
-            df_log.loc[logID, "ID"] = last_index
-            df_log.loc[logID, "UserID"] = user_id
-            df_log.loc[logID, "Operation"] = "login"
-            df_log.loc[logID, "Time"] = get_time
-            df_log.to_csv("log_file.csv")
+
         else:
             abort(400, message="username is not registered")
 
