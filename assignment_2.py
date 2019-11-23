@@ -40,7 +40,7 @@ house_model = api.model('House', {
     "Identifier": fields.Integer,
     "UserID": fields.Integer,
     "Distance": fields.Float,
-    "Badroom2": fields.Float,
+    "Bedroom": fields.Float,
     "Bathroom": fields.Float,
     "Car": fields.Float,
     "Landsize": fields.Float,
@@ -383,7 +383,7 @@ class HousesList(Resource):
         # get houses as JSON string
         # read information from csv file
         df = pd.read_csv("user_houses.csv",
-                         usecols=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize",
+                         usecols=["Identifier", "UserID", "Distance", "Bedroom", "Bathroom", "Car", "Landsize",
                                   "BuildingArea", "YearBuilt", "Lattitude",
                                   "Longtitude", "Suburb", "Street", "Type", "Regionname", "Predicted_Price"])
         df.set_index(["Identifier"], inplace=True)
@@ -442,7 +442,7 @@ class HousesList(Resource):
     def post(self):
         #read information from csv file
         df = pd.read_csv("user_houses.csv",
-                         usecols=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize",
+                         usecols=["Identifier", "UserID", "Distance", "Bedroom", "Bathroom", "Car", "Landsize",
                                   "BuildingArea", "YearBuilt", "Lattitude",
                                   "Longtitude", "Suburb", "Street", "Type", "Regionname", "Predicted_Price"])
         df.set_index(["Identifier"], inplace = True)
@@ -465,7 +465,7 @@ class HousesList(Resource):
 
         # put the value into the dataset
         df_predicted = pd.DataFrame(
-            columns=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize", "BuildingArea",
+            columns=["Identifier", "UserID", "Distance", "Bedroom", "Bathroom", "Car", "Landsize", "BuildingArea",
                      "YearBuilt", "Lattitude",
                      "Longtitude", "Suburb", "Street", "Type", "Regionname"])
 
@@ -524,7 +524,7 @@ class Houses(Resource):
     def put(self, id):
 
         df = pd.read_csv("user_houses.csv",
-                         usecols=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize",
+                         usecols=["Identifier", "UserID", "Distance", "Bedroom", "Bathroom", "Car", "Landsize",
                                   "BuildingArea", "YearBuilt", "Lattitude",
                                   "Longtitude", "Suburb", "Street", "Type", "Regionname", "Predicted_Price"])
 
@@ -558,7 +558,7 @@ class Houses(Resource):
             return {"message": "House Identifier cannot be changed."}, 400
 
         df_predicted = pd.DataFrame(
-            columns=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize", "BuildingArea",
+            columns=["Identifier", "UserID", "Distance", "Bedroom", "Bathroom", "Car", "Landsize", "BuildingArea",
                      "YearBuilt", "Lattitude",
                      "Longtitude", "Suburb", "Street", "Type", "Regionname"])
         # Update the house information
@@ -603,7 +603,7 @@ class Houses(Resource):
     def delete(self, id):
 
         df = pd.read_csv("user_houses.csv",
-                         usecols=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize",
+                         usecols=["Identifier", "UserID", "Distance", "Bedroom", "Bathroom", "Car", "Landsize",
                                   "BuildingArea", "YearBuilt", "Lattitude",
                                   "Longtitude", "Suburb", "Street", "Type", "Regionname", "Predicted_Price"])
 
