@@ -227,6 +227,14 @@ parser1.add_argument("suburb", choices=suburb_list)
 parser1.add_argument('year', type=float)
 parser1.add_argument("distance", type=float)
 
+df_street = pd.read_csv("streetFlat.csv", usecols=["street"])
+street_list = list(df_street["street"])
+
+df_region = pd.read_csv("regionFlat.csv", usecols=["Region"])
+region_list = list(df_region["Region"])
+
+df_type = pd.read_csv("typeFlat.csv", usecols=["Type"])
+type_list = list(df_type["Type"])
 
 @api.route('/graphs')
 # @api.doc(decsription="Graph1: please submit year\nGrapg2: please submit suburb name and year\nGraph3: please submit distance.")
@@ -477,6 +485,19 @@ class HousesList(Resource):
             if key not in house_model.keys():
                 # unexpected features
                 return {"message": "Property {} is invalid.".format(str(key))}, 400
+            if key == "Suburb": #whe  suburb part, check the input string whether valid or not
+                if house[key] not in suburb_list:
+                    return {"message": "Property {}'s value is invalid".format(str(key))}, 400
+            if key == "Street":
+                if house[key] not in street_list:
+                    return {"message": "Property {}'s value is invalid".format(str(key))}, 400
+            if key == "Type":
+                if house[key] not in type_list:
+                    return {"message": "Property {}'s value is invalid".format(str(key))}, 400
+            if key == "Regionname":
+                if house[key] not in region_list:
+                    return {"message": "Property {}'s value is invalid".format(str(key))}, 400
+
             df_predicted.loc[0, key] = house[key]
             df.loc[id, key] = house[key]
 
@@ -567,6 +588,20 @@ class Houses(Resource):
                 continue
             if key not in house_model.keys():
                 return {"message": "Property {} is invalid.".format(str(key))}, 400
+            if key == "Suburb": #whe  suburb part, check the input string whether valid or not
+                if house[key] not in suburb_list:
+                    return {"message": "Property {}'s value is invalid".format(str(key))}, 400
+            if key == "Street":
+                if house[key] not in street_list:
+                    return {"message": "Property {}'s value is invalid".format(str(key))}, 400
+            if key == "Type":
+                if house[key] not in type_list:
+                    return {"message": "Property {}'s value is invalid".format(str(key))}, 400
+            if key == "Regionname":
+                if house[key] not in region_list:
+                    return {"message": "Property {}'s value is invalid".format(str(key))}, 400
+
+
             df.loc[id, key] = house[key]
             if str(key) != "Price":
                 df_predicted.loc[0,key] = house[key]
