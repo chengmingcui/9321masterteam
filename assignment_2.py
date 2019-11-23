@@ -3,6 +3,7 @@ import ujson
 import jwt
 import datetime
 import re
+import time
 
 import pandas as pd
 from flask import Flask
@@ -87,6 +88,9 @@ class Authentication(Resource):
     @api.doc(description="Generates a authentication token")
     @api.expect(auth_parser, validate=True)
     def post(self):
+        df_log = pd.read_csv("log_file.csv",usecols=["ID","UserID", "Operation", "Time"])
+        #df_log.set_index(["ID"], inplace = True)
+        get_time = time.asctime(time.localtime(time.time()))
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
         df_user.set_index(["UserID"], inplace=True)
 
@@ -96,7 +100,6 @@ class Authentication(Resource):
             abort(400, message="username and password needed")
         username = args.get("username")
         password = args.get("password")
-
 
         print(df_user.Username)
         print(username)
@@ -116,6 +119,19 @@ class Authentication(Resource):
                 return token
             else:
                 abort(400, message="password is not correct")
+            if df_log.empty:
+                last_index = 0
+            else:
+                last_file = df_log.tail(1)
+                print(int(last_file["ID"].values))
+                print(last_file.index)
+                last_index = int(last_file["ID"].values) + 1
+            logID = last_index
+            df_log.loc[logID, "ID"] = last_index
+            df_log.loc[logID, "UserID"] = user_id
+            df_log.loc[logID, "Operation"] = "login"
+            df_log.loc[logID, "Time"] = get_time
+            df_log.to_csv("log_file.csv")
         else:
             abort(400, message="username is not registered")
 
@@ -130,8 +146,11 @@ class Registration(Resource):
     @api.doc(descrption="User can register an account in our service.")
     @api.expect(user_model, validate=True)
     def post(self):
+        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        # df_log.set_index(["ID"], inplace = True)
+        get_time = time.asctime(time.localtime(time.time()))
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        df_user.set_index(["UserID"], inplace=True)
+        #df_user.set_index(["UserID"], inplace=True) 这行加上会报错，KeyError
         user = request.json
 
         # if ("UserID" not in user) or ("Username" not in user ) or ("Password" not in user):
@@ -160,7 +179,19 @@ class Registration(Resource):
 
         # user_data.set_index("UserID")
         df_user.to_csv("user_accounts.csv", )
-
+        if df_log.empty:
+            last_index = 0
+        else:
+            last_file = df_log.tail(1)
+            print(int(last_file["ID"].values))
+            print(last_file.index)
+            last_index = int(last_file["ID"].values) + 1
+        logID = last_index
+        df_log.loc[logID,"ID"] = last_index
+        df_log.loc[logID,"UserID"] = userID
+        df_log.loc[logID, "Operation"] = "Register"
+        df_log.loc[logID,"Time"] = get_time
+        df_log.to_csv("log_file.csv")
         # df.to_csv("user_accounts.csv")
         return {"message": "UserID is {} has created".format(userID)}, 200
 
@@ -301,11 +332,24 @@ class UserAccountsManage(Resource):
         #according to username to give the user account information without password
         # df_user = pd.read_csv("user_accounts.csv")
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        df_user.set_index(["UserID"], inplace= True)
-
+        #df_user.set_index(["UserID"], inplace= True)
 
         if id not in df_user.index:
             abort(404, message="User {} does not exist".format(id))
+        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        # df_log.set_index(["ID"], inplace = True)
+        get_time = time.asctime(time.localtime(time.time()))
+        if df_log.empty:
+            last_index = 0
+        else:
+            last_file = df_log.tail(1)
+            last_index = int(last_file["ID"].values) + 1
+        logID = last_index
+        df_log.loc[logID, "ID"] = last_index
+        df_log.loc[logID, "UserID"] = id
+        df_log.loc[logID, "Operation"] = "Get user Info"
+        df_log.loc[logID, "Time"] = get_time
+        df_log.to_csv("log_file.csv")
 
 
 
@@ -321,15 +365,29 @@ class UserAccountsManage(Resource):
     @api.expect(user_model)
     @requires_auth
     def put(self, id):
-
+        get_time = time.asctime(time.localtime(time.time()))
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        df_user.set_index(["UserID"], inplace=True)
+        #df_user.set_index(["UserID"], inplace=True)
         # for user to update itsown user account information
         # df = pd.read_csv("user_accounts.csv")
+
         if id not in df_user.index:
             abort(404, message="User {} does not exist".format(id))
-
-
+        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        # df_log.set_index(["ID"], inplace = True)
+        if df_log.empty:
+            last_index = 0
+        else:
+            last_file = df_log.tail(1)
+            print(int(last_file["ID"].values))
+            print(last_file.index)
+            last_index = int(last_file["ID"].values) + 1
+        logID = last_index
+        df_log.loc[logID,"ID"] = last_index
+        df_log.loc[logID,"UserID"] = id
+        df_log.loc[logID, "Operation"] = "Update user Info"
+        df_log.loc[logID,"Time"] = get_time
+        df_log.to_csv("log_file.csv")
         # if df_user.loc[id,"Username"] != username or df_user.loc[id,"Password"] != password:
         #     abort(403, message= "No permission to access account{}".format(id))
 
@@ -354,11 +412,26 @@ class UserAccountsManage(Resource):
     def delete(self, id):
         # for user delete their account
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        df_user.set_index(["UserID"], inplace=True)
+        #df_user.set_index(["UserID"], inplace=True)
 
         if id not in df_user.index:
             abort(404, message="User {} does not exist".format(id))
-
+        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        # df_log.set_index(["ID"], inplace = True)
+        get_time = time.asctime(time.localtime(time.time()))
+        if df_log.empty:
+            last_index = 0
+        else:
+            last_file = df_log.tail(1)
+            print(int(last_file["ID"].values))
+            print(last_file.index)
+            last_index = int(last_file["ID"].values) + 1
+        logID = last_index
+        df_log.loc[logID, "ID"] = last_index
+        df_log.loc[logID, "UserID"] = id
+        df_log.loc[logID, "Operation"] = "Delete user Info"
+        df_log.loc[logID, "Time"] = get_time
+        df_log.to_csv("log_file.csv")
         # drop the row with this username
         # row = [index for index,row in df.iterrows() if row["Username"] == username]
         df_user.drop(id, inplace=True)
@@ -401,7 +474,22 @@ class HousesList(Resource):
         ascending = args.get('ascending', False)
 
         userID = args.get('UserID')
-
+        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        # df_log.set_index(["ID"], inplace = True)
+        get_time = time.asctime(time.localtime(time.time()))
+        if df_log.empty:
+            last_index = 0
+        else:
+            last_file = df_log.tail(1)
+            print(int(last_file["ID"].values))
+            print(last_file.index)
+            last_index = int(last_file["ID"].values) + 1
+        logID = last_index
+        df_log.loc[logID, "ID"] = last_index
+        df_log.loc[logID, "UserID"] = userID
+        df_log.loc[logID, "Operation"] = "Get the houses list of User-predicted"
+        df_log.loc[logID, "Time"] = get_time
+        df_log.to_csv("log_file.csv")
 
         if userID not in list(df["UserID"]):
             api.abort(404, "No house information")
@@ -459,7 +547,22 @@ class HousesList(Resource):
         # since post new data for predict price, so accessing dataset here is test dataset
         # for user to provide  a new house and its details into dataset
         house = request.json  # the content that post request provide
-
+        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        # df_log.set_index(["ID"], inplace = True)
+        get_time = time.asctime(time.localtime(time.time()))
+        if df_log.empty:
+            last_index = 0
+        else:
+            last_file = df_log.tail(1)
+            print(int(last_file["ID"].values))
+            print(last_file.index)
+            last_index = int(last_file["ID"].values) + 1
+        logID = last_index
+        df_log.loc[logID, "ID"] = last_index
+        df_log.loc[logID, "UserID"] = house["UserID"]
+        df_log.loc[logID, "Operation"] = "Predict"
+        df_log.loc[logID, "Time"] = get_time
+        df_log.to_csv("log_file.csv")
         if "Identifier" not in house:
             return {"message": "Identifier is missing."}, 400
 
@@ -485,7 +588,7 @@ class HousesList(Resource):
             if key not in house_model.keys():
                 # unexpected features
                 return {"message": "Property {} is invalid.".format(str(key))}, 400
-            if key == "Suburb": #whe  suburb part, check the input string whether valid or not
+            if key == "Suburb":  # whe  suburb part, check the input string whether valid or not
                 if house[key] not in suburb_list:
                     return {"message": "Property {}'s value is invalid".format(str(key))}, 400
             if key == "Street":
@@ -555,7 +658,22 @@ class Houses(Resource):
         print(df.index)
         # the accessing dataset is test dataset
         args = parser.parse_args()
-
+        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        # df_log.set_index(["ID"], inplace = True)
+        get_time = time.asctime(time.localtime(time.time()))
+        if df_log.empty:
+            last_index = 0
+        else:
+            last_file = df_log.tail(1)
+            print(int(last_file["ID"].values))
+            print(last_file.index)
+            last_index = int(last_file["ID"].values) + 1
+        logID = last_index
+        df_log.loc[logID, "ID"] = last_index
+        df_log.loc[logID, "UserID"] = int(df.loc[id,"UserID"])
+        df_log.loc[logID, "Operation"] = "Update house Info"
+        df_log.loc[logID, "Time"] = get_time
+        df_log.to_csv("log_file.csv")
         # 我觉得可能不需要user和password作为query parameter了，因为expect model里面有user 和password
         user = float(args.get("UserID"))
         # password = args.get("Password")
@@ -583,12 +701,13 @@ class Houses(Resource):
                      "YearBuilt", "Lattitude",
                      "Longtitude", "Suburb", "Street", "Type", "Regionname"])
         # Update the house information
+        # Update the house information
         for key in house:
             if str(key) == "Identifier":
                 continue
             if key not in house_model.keys():
                 return {"message": "Property {} is invalid.".format(str(key))}, 400
-            if key == "Suburb": #whe  suburb part, check the input string whether valid or not
+            if key == "Suburb":  # whe  suburb part, check the input string whether valid or not
                 if house[key] not in suburb_list:
                     return {"message": "Property {}'s value is invalid".format(str(key))}, 400
             if key == "Street":
@@ -600,7 +719,6 @@ class Houses(Resource):
             if key == "Regionname":
                 if house[key] not in region_list:
                     return {"message": "Property {}'s value is invalid".format(str(key))}, 400
-
 
             df.loc[id, key] = house[key]
             if str(key) != "Price":
@@ -649,7 +767,22 @@ class Houses(Resource):
         args = parser.parse_args()
 
         user = args.get("UserID")
-
+        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        # df_log.set_index(["ID"], inplace = True)
+        get_time = time.asctime(time.localtime(time.time()))
+        if df_log.empty:
+            last_index = 0
+        else:
+            last_file = df_log.tail(1)
+            print(int(last_file["ID"].values))
+            print(last_file.index)
+            last_index = int(last_file["ID"].values) + 1
+        logID = last_index
+        df_log.loc[logID, "ID"] = last_index
+        df_log.loc[logID, "UserID"] = user
+        df_log.loc[logID, "Operation"] = "Delete the prediction data"
+        df_log.loc[logID, "Time"] = get_time
+        df_log.to_csv("log_file.csv")
         print(type(df.index))
         print(list(df.index))
         print(id)
@@ -669,6 +802,39 @@ class Houses(Resource):
         df.to_csv('user_houses.csv')
 
         return {"message": " House {} has been deleted successfully".format(id)}, 200
+log_parser = reqparse.RequestParser()  # initialize a request parser
+# use query parameters to pass username and password, this is for check this user whether has the right to do operation in the house information which he request
+# because only the owner of those house can have the right to access those house information and do operation.
+
+operation_list = ["login", "Register", "Predict", "Get the houses list of User-predicted","Delete the prediction data",
+                  "Get user Info","Update house Info","Delete user Info","Update user Info"]
+log_parser.add_argument('operation', choices=operation_list)
+@api.route("/APIUsage")
+class APIUsage(Resource):
+    @api.response(404, "Error: Not Found Information")
+    @api.response(200, " Successful request ")
+    @api.doc(description="The information about API usage")
+    @api.expect(log_parser,validate=True)
+    @requires_auth
+    def get(self):   #show the usage info in a pie chart,every operation take a part
+        args = log_parser.parse_args()
+        log_operation = args.get("operation")
+        df_log = pd.read_csv('log_file.csv',usecols=["ID", "UserID", "Operation", "Time"])
+        print(log_operation)
+        print(df_log["Operation"])
+        if log_operation in df_log["Operation"].values:
+            logs = df_log.query('Operation == @log_operation')
+            log_json = logs.to_json(orient='index')
+            log = json.loads(log_json)
+            ret = []
+            for idx in log:
+                log_info = log[idx]
+                log_info["ID"] = idx
+                ret.append(log_info)
+
+            return ret,200
+        else:
+            api.abort(404, "Operation {} doesn't exist".format(log_operation))
 
 
 if __name__ == "__main__":
