@@ -149,7 +149,7 @@ class Registration(Resource):
         # df_log.set_index(["ID"], inplace = True)
         get_time = time.asctime(time.localtime(time.time()))
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        #df_user.set_index(["UserID"], inplace=True) 这行加上会报错，KeyError
+        df_user.set_index(["UserID"], inplace=True)
         user = request.json
 
         # if ("UserID" not in user) or ("Username" not in user ) or ("Password" not in user):
@@ -331,7 +331,7 @@ class UserAccountsManage(Resource):
         #according to username to give the user account information without password
         # df_user = pd.read_csv("user_accounts.csv")
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        #df_user.set_index(["UserID"], inplace= True)
+        df_user.set_index(["UserID"], inplace= True)
 
         if id not in df_user.index:
             abort(404, message="User {} does not exist".format(id))
@@ -366,7 +366,7 @@ class UserAccountsManage(Resource):
     def put(self, id):
         get_time = time.asctime(time.localtime(time.time()))
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        #df_user.set_index(["UserID"], inplace=True)
+        df_user.set_index(["UserID"], inplace=True)
         # for user to update itsown user account information
         # df = pd.read_csv("user_accounts.csv")
 
@@ -411,7 +411,7 @@ class UserAccountsManage(Resource):
     def delete(self, id):
         # for user delete their account
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        #df_user.set_index(["UserID"], inplace=True)
+        df_user.set_index(["UserID"], inplace=True)
 
         if id not in df_user.index:
             abort(404, message="User {} does not exist".format(id))
