@@ -1,0 +1,13 @@
+Identifier,UserID,Distance,Bedroom,Bathroom,Car,Landsize,BuildingArea,YearBuilt,Lattitude,Longtitude,Suburb,Street,Type,Regionname,Predicted_Price
+0.0,0.0,20.0,3.0,2.0,2.0,300.0,200.0,2010.0,23.0,43.0,Preston,Albion St,t,Northern Victoria,881681.0
+1.0,0.0,200.0,2.0,1.0,1.0,220.0,120.0,1988.0,43.0,14.0,Essendon,Thomas St,t,Western Victoria,
+4.0,9.0,1.3,2.0,1.0,1.0,100.0,90.0,2008.0,130.0,130.0,Glenroy,William St,t,Northern Metropolitan,893794.0
+5.0,9.0,12.0,2.0,2.0,1.0,100.0,90.0,2000.0,120.0,120.0,Glenroy,William St,h,Northern Metropolitan,872853.34
+9.0,9.0,12.0,2.0,2.0,1.0,100.0,90.0,2000.0,120.0,120.0,Glenroy,William St,h,Northern Metropolitan,983627.44
+12.0,9.0,12.0,2.0,2.0,1.0,100.0,90.0,2000.0,120.0,120.0,Glenroy,William St,h,Northern Metropolitan,940521.0
+13.0,9.0,12.0,2.0,2.0,1.0,100.0,90.0,2000.0,120.0,120.0,Glenroy,William St,h,Northern Metropolitan,1015103.44
+14.0,9.0,12.0,2.0,2.0,1.0,100.0,90.0,2000.0,120.0,120.0,Glenroy,William St,h,Northern Metropolitan,949669.0
+16.0,9.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,Glenroy,Barkly St,t,South-Eastern Metropolitan,876652.0
+17.0,9.0,12.0,2.0,2.0,2.0,120.0,90.0,2000.0,120.0,30.0,Glenroy,William St,h,Northern Metropolitan,852657.0
+18.0,9.0,12.0,3.0,3.0,2.0,150.0,120.0,2000.0,120.0,120.0,The Basin,High St,h,Western Victoria,933323.0
+20.0,9.0,10.0,3.0,3.0,2.0,150.0,120.0,2000.0,120.0,120.0,The Basin,High St,h,Western Victoria,920078.0
