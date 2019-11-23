@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="../plugins/perfect-scrollbar/css/perfect-scrollbar.css">
         <link rel="stylesheet" href="../dist/css/theme.min.css">
         <script src="../src/js/vendor/modernizr-2.8.3.min.js"></script>
+        <script src="../js/9321/predictor.js"></script>
     </head>
 
     <body>
@@ -41,13 +42,13 @@
                             </div>
                             <h3>Sign In to Melbourne House Predict Center</h3>
                             <p>Happy to see you again!</p>
-                            <form action="../index.html">
+                            <form >
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Username" required="true" value="root">
+                                    <input id="username" type="text" class="form-control" placeholder="Username" required="true" value="user">
                                     <i class="ik ik-user"></i>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="Password" required="true" value="passwd">
+                                    <input id="password" type="password" class="form-control" placeholder="Password" required="true" value="passwd">
                                     <i class="ik ik-lock"></i>
                                 </div>
                                 <div class="row">
@@ -62,7 +63,7 @@
                                     </div>
                                 </div>
                                 <div class="sign-btn text-center">
-                                    <button class="btn btn-theme">Sign In</button>
+                                    <button class="btn btn-theme" onclick=" sign_in()">Sign In</button>
                                 </div>
                             </form>
                             <div class="register">
