@@ -946,4 +946,4 @@ if __name__ == "__main__":
     # df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
     # df_user.set_index("UserID")
     # this file is used for storing the user's username and password
-    app.run(debug=True, host="0.0.0.0",port=18080)
+    app.run(debug=True, host="0.0.0.0")
