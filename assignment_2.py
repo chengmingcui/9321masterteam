@@ -14,12 +14,12 @@ from flask_restplus import inputs
 from flask_restplus import reqparse
 import machine_learning as ml
 import Data_for_graph as dg
-
+from flask import redirect
 # assume the dataset which API is going to access is named mel_data.csv
 
 # the API has two operations get and post for houses_price/id
 # the API has get list of house_prices
-app = Flask(__name__)
+app = Flask(__name__,static_url_path="/")
 api = Api(
     app,
     doc="/api",
@@ -922,6 +922,11 @@ class APIUsage(Resource):
             return ret,200
         else:
             api.abort(404, "Operation {} doesn't exist".format(log_operation))
+
+# for front end
+@app.route("/")
+def index():
+    return redirect("/index.html",code=302)
 
 
 if __name__ == "__main__":
