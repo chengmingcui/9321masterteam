@@ -20,20 +20,24 @@ import Data_for_graph as dg
 # the API has two operations get and post for houses_price/id
 # the API has get list of house_prices
 app = Flask(__name__)
-api = Api(app,
-          authorizations={"Token-Based": {
-              "type": "apiKey",
-              "name": "API-TOKEN",
-              "in": "header"
-          }
-          },
-          security="Token-Based",
-          default="Houses",  # the namespace
-          title="Melbourne House price dataset",  # the documentation title
-          description="This API aims to predict the house price in Melbourne Australia.\n Once you provide some details about your house, a predict price of your"
-                      + "house would be provided to you immediately !",
-          version="1.0"
-          )
+api = Api(
+    app,
+    doc="/api",
+    default_label="api",
+    prefix="/api",
+    authorizations={"Token-Based": {
+        "type": "apiKey",
+        "name": "API-TOKEN",
+        "in": "header"
+    }
+    },
+    security="Token-Based",
+    default="Houses",  # the namespace
+    title="Melbourne House price dataset",  # the documentation title
+    description="This API aims to predict the house price in Melbourne Australia.\n Once you provide some details about your house, a predict price of your"
+    + "house would be provided to you immediately !",
+    version="1.0"
+)
 
 # different with the test dataset schema, where it adds columns "Identifier", "User" and "Password"
 # those three columns values do not contribute to predict price.
@@ -88,10 +92,12 @@ class Authentication(Resource):
     @api.doc(description="Generates a authentication token")
     @api.expect(auth_parser, validate=True)
     def post(self):
-        df_log = pd.read_csv("log_file.csv",usecols=["ID","UserID", "Operation", "Time"])
+        df_log = pd.read_csv("log_file.csv", usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         #df_log.set_index(["ID"], inplace = True)
         get_time = time.asctime(time.localtime(time.time()))
-        df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
+        df_user = pd.read_csv("user_accounts.csv", usecols=[
+                              "UserID", "Username", "Password"])
         df_user.set_index(["UserID"], inplace=True)
 
         args = auth_parser.parse_args()
@@ -145,10 +151,12 @@ class Registration(Resource):
     @api.doc(descrption="User can register an account in our service.")
     @api.expect(user_model, validate=True)
     def post(self):
-        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        df_log = pd.read_csv("log_file.csv", usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         # df_log.set_index(["ID"], inplace = True)
         get_time = time.asctime(time.localtime(time.time()))
-        df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
+        df_user = pd.read_csv("user_accounts.csv", usecols=[
+                              "UserID", "Username", "Password"])
         df_user.set_index(["UserID"], inplace=True)
         user = request.json
 
@@ -186,17 +194,18 @@ class Registration(Resource):
             print(last_file.index)
             last_index = int(last_file["ID"].values) + 1
         logID = last_index
-        df_log.loc[logID,"ID"] = last_index
-        df_log.loc[logID,"UserID"] = userID
+        df_log.loc[logID, "ID"] = last_index
+        df_log.loc[logID, "UserID"] = userID
         df_log.loc[logID, "Operation"] = "Register"
-        df_log.loc[logID,"Time"] = get_time
+        df_log.loc[logID, "Time"] = get_time
         df_log.to_csv("log_file.csv")
         # df.to_csv("user_accounts.csv")
         return {"message": "UserID is {} has created".format(userID)}, 200
 
 
 parser1 = reqparse.RequestParser()
-parser1.add_argument("graph service", required=True, choices=["graph1", "graph2", "graph3"])
+parser1.add_argument("graph service", required=True,
+                     choices=["graph1", "graph2", "graph3"])
 
 suburb_list = ["Reservoir", "Richmond", "Brunswick", "Bentleigh East", "Coburg", "Essendon", "Preston", "Hawthorn",
                "Yarraville", "Glenroy", "Glen Iris", "Pascoe Vale",
@@ -266,6 +275,7 @@ region_list = list(df_region["Region"])
 df_type = pd.read_csv("typeFlat.csv", usecols=["Type"])
 type_list = list(df_type["Type"])
 
+
 @api.route('/graphs')
 # @api.doc(decsription="Graph1: please submit year\nGrapg2: please submit suburb name and year\nGraph3: please submit distance.")
 class Graph(Resource):
@@ -317,25 +327,24 @@ class Graph(Resource):
         return graph_json, 200
 
 
-
-
 @api.route("/users/<int:id>")
-#@api.param("username", "The username of an account created previously")
+# @api.param("username", "The username of an account created previously")
 class UserAccountsManage(Resource):
 
-    @api.response(404,"Error: Not Found Information")
+    @api.response(404, "Error: Not Found Information")
     @api.response(200, "Success information retrieval.")
     @requires_auth
-
-    def get(self,id):
-        #according to username to give the user account information without password
+    def get(self, id):
+        # according to username to give the user account information without password
         # df_user = pd.read_csv("user_accounts.csv")
-        df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        df_user.set_index(["UserID"], inplace= True)
+        df_user = pd.read_csv("user_accounts.csv", usecols=[
+                              "UserID", "Username", "Password"])
+        df_user.set_index(["UserID"], inplace=True)
 
         if id not in df_user.index:
             abort(404, message="User {} does not exist".format(id))
-        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        df_log = pd.read_csv("log_file.csv", usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         # df_log.set_index(["ID"], inplace = True)
         get_time = time.asctime(time.localtime(time.time()))
         if df_log.empty:
@@ -350,10 +359,7 @@ class UserAccountsManage(Resource):
         df_log.loc[logID, "Time"] = get_time
         df_log.to_csv("log_file.csv")
 
-
-
-
-        user = dict(df_user.loc[id,["UserID","Username"]])
+        user = dict(df_user.loc[id, ["UserID", "Username"]])
         return user, 200
 
     @api.response(404, "Error: Not Found Information")
@@ -365,14 +371,16 @@ class UserAccountsManage(Resource):
     @requires_auth
     def put(self, id):
         get_time = time.asctime(time.localtime(time.time()))
-        df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
+        df_user = pd.read_csv("user_accounts.csv", usecols=[
+                              "UserID", "Username", "Password"])
         df_user.set_index(["UserID"], inplace=True)
         # for user to update itsown user account information
         # df = pd.read_csv("user_accounts.csv")
 
         if id not in df_user.index:
             abort(404, message="User {} does not exist".format(id))
-        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        df_log = pd.read_csv("log_file.csv", usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         # df_log.set_index(["ID"], inplace = True)
         if df_log.empty:
             last_index = 0
@@ -382,10 +390,10 @@ class UserAccountsManage(Resource):
             print(last_file.index)
             last_index = int(last_file["ID"].values) + 1
         logID = last_index
-        df_log.loc[logID,"ID"] = last_index
-        df_log.loc[logID,"UserID"] = id
+        df_log.loc[logID, "ID"] = last_index
+        df_log.loc[logID, "UserID"] = id
         df_log.loc[logID, "Operation"] = "Update user Info"
-        df_log.loc[logID,"Time"] = get_time
+        df_log.loc[logID, "Time"] = get_time
         df_log.to_csv("log_file.csv")
         # if df_user.loc[id,"Username"] != username or df_user.loc[id,"Password"] != password:
         #     abort(403, message= "No permission to access account{}".format(id))
@@ -399,7 +407,6 @@ class UserAccountsManage(Resource):
                 abort(400, message="Invalid Property {}".format(key))
             df_user.loc[id, key] = user[key]
 
-
         df_user.to_csv("user_accounts.csv")
         return {"message": "Your account updated successfully"}, 200
 
@@ -410,12 +417,14 @@ class UserAccountsManage(Resource):
     # @api.token_required
     def delete(self, id):
         # for user delete their account
-        df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
+        df_user = pd.read_csv("user_accounts.csv", usecols=[
+                              "UserID", "Username", "Password"])
         df_user.set_index(["UserID"], inplace=True)
 
         if id not in df_user.index:
             abort(404, message="User {} does not exist".format(id))
-        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        df_log = pd.read_csv("log_file.csv", usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         # df_log.set_index(["ID"], inplace = True)
         get_time = time.asctime(time.localtime(time.time()))
         if df_log.empty:
@@ -450,8 +459,8 @@ parser.add_argument("UserID", required=True, type=int)
 
 @api.route('/houses')
 class HousesList(Resource):
-    #@api.response(400, "Error: User name or password incorrect.")
-    @api.response(404,"Error: Not Found Information")
+    # @api.response(400, "Error: User name or password incorrect.")
+    @api.response(404, "Error: Not Found Information")
     @api.response(200, "Success information retrieval.")
     @api.doc(description="User can get all houses information he or she has provided so far.")
     @api.expect(parser, validate=True)
@@ -473,7 +482,8 @@ class HousesList(Resource):
         ascending = args.get('ascending', False)
 
         userID = args.get('UserID')
-        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        df_log = pd.read_csv("log_file.csv", usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         # df_log.set_index(["ID"], inplace = True)
         get_time = time.asctime(time.localtime(time.time()))
         if df_log.empty:
@@ -496,12 +506,12 @@ class HousesList(Resource):
         # print("current df is ")
         # print(df.to_string())
 
-        house_price_info = df.query('UserID == @userID')  # 截取所有这个userID的house information
-
-
+        # 截取所有这个userID的house information
+        house_price_info = df.query('UserID == @userID')
 
         if order:
-            house_price_info.sort_values(by=order, inplace=True, ascending=ascending)
+            house_price_info.sort_values(
+                by=order, inplace=True, ascending=ascending)
 
         json_str = house_price_info.to_json(orient='index')
 
@@ -509,7 +519,7 @@ class HousesList(Resource):
         print(house_price_info.to_string())
         print(json_str)
 
-        ds = json.loads(json_str) # ds is dict
+        ds = json.loads(json_str)  # ds is dict
         print(type(ds))
         # print("\nds")
         # print(ds)
@@ -523,10 +533,9 @@ class HousesList(Resource):
             house["Identifier"] = idx
             ret.append(house)
 
-
         print("输出的ret 是")
         print(ret)
-        return ret,200
+        return ret, 200
 
     @api.response(200, " Successful request ")
     @api.response(400, "Error: Invalidate request")
@@ -535,18 +544,19 @@ class HousesList(Resource):
     @requires_auth
     # @api.token_required
     def post(self):
-        #read information from csv file
+        # read information from csv file
         df = pd.read_csv("user_houses.csv",
                          usecols=["Identifier", "UserID", "Distance", "Bedroom", "Bathroom", "Car", "Landsize",
                                   "BuildingArea", "YearBuilt", "Lattitude",
                                   "Longtitude", "Suburb", "Street", "Type", "Regionname", "Predicted_Price"])
-        df.set_index(["Identifier"], inplace = True)
+        df.set_index(["Identifier"], inplace=True)
         print("###################df####################")
         print(df.to_string())
         # since post new data for predict price, so accessing dataset here is test dataset
         # for user to provide  a new house and its details into dataset
         house = request.json  # the content that post request provide
-        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        df_log = pd.read_csv("log_file.csv", usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         # df_log.set_index(["ID"], inplace = True)
         get_time = time.asctime(time.localtime(time.time()))
         if df_log.empty:
@@ -565,12 +575,13 @@ class HousesList(Resource):
         if "Identifier" not in house:
             return {"message": "Identifier is missing."}, 400
 
-        id = house["Identifier"]  # id is the Identifier of the house which a user just post
+        # id is the Identifier of the house which a user just post
+        id = house["Identifier"]
 
         # check the Identifier whether already exist
         if id in df.index:
             return {
-                       "message": "Sorry, A house with identifier {} is already exist, please create a new identifier.".format(
+                "message": "Sorry, A house with identifier {} is already exist, please create a new identifier.".format(
                            id)}, 400
 
         # put the value into the dataset
@@ -632,13 +643,13 @@ class HousesList(Resource):
 
 @api.route("/houses/<int:id>")
 @api.param("id", "The house identifier")
-@api.param("UserID", "The user ID",type= int)
+@api.param("UserID", "The user ID", type=int)
 # @api.param("Password","The password of user account")
 class Houses(Resource):
 
     @api.response(403, "Error: No Right to access data")
     @api.response(400, "Error: Invalidate request")
-    @api.response(404,"Error: Not Found Information")
+    @api.response(404, "Error: Not Found Information")
     @api.response(200, " Successful request ")
     @api.doc(description=" Update information of a house by its Identifier, and return the new predict price")
     @api.expect(house_model)
@@ -651,13 +662,13 @@ class Houses(Resource):
                                   "BuildingArea", "YearBuilt", "Lattitude",
                                   "Longtitude", "Suburb", "Street", "Type", "Regionname", "Predicted_Price"])
 
-
-        df.set_index(["Identifier"], inplace= True)
+        df.set_index(["Identifier"], inplace=True)
         print(df.to_string())
         print(df.index)
         # the accessing dataset is test dataset
         args = parser.parse_args()
-        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        df_log = pd.read_csv("log_file.csv", usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         # df_log.set_index(["ID"], inplace = True)
         get_time = time.asctime(time.localtime(time.time()))
         if df_log.empty:
@@ -669,7 +680,7 @@ class Houses(Resource):
             last_index = int(last_file["ID"].values) + 1
         logID = last_index
         df_log.loc[logID, "ID"] = last_index
-        df_log.loc[logID, "UserID"] = int(df.loc[id,"UserID"])
+        df_log.loc[logID, "UserID"] = int(df.loc[id, "UserID"])
         df_log.loc[logID, "Operation"] = "Update house Info"
         df_log.loc[logID, "Time"] = get_time
         df_log.to_csv("log_file.csv")
@@ -684,8 +695,9 @@ class Houses(Resource):
 
         # for checking the user whether has the right to access the house information
 
-        if df.loc[id,"UserID"]- user != 0:
-            api.abort(403, "message: Sorry, you has no right to access house {}".format(id))
+        if df.loc[id, "UserID"] - user != 0:
+            api.abort(
+                403, "message: Sorry, you has no right to access house {}".format(id))
 
         #
         # if user is not  df.loc[id, "UserID"]:
@@ -721,7 +733,7 @@ class Houses(Resource):
 
             df.loc[id, key] = house[key]
             if str(key) != "Price":
-                df_predicted.loc[0,key] = house[key]
+                df_predicted.loc[0, key] = house[key]
         print("更新房子信息之后的：")
         print(df.to_string())
         # recall the regression function to predict price
@@ -747,7 +759,7 @@ class Houses(Resource):
         return {"message": "House {} information has been updated and predict price {}".format(id, price)}, 200
 
     @api.response(403, "Error: No Right to access data ")
-    @api.response(404,"Error: Not Found Information")
+    @api.response(404, "Error: Not Found Information")
     @api.response(200, " Successful request ")
     @api.doc(description="Delete a house and its information from dataset")
     @requires_auth
@@ -759,14 +771,14 @@ class Houses(Resource):
                                   "BuildingArea", "YearBuilt", "Lattitude",
                                   "Longtitude", "Suburb", "Street", "Type", "Regionname", "Predicted_Price"])
 
-
         df.set_index(["Identifier"], inplace=True)
         print(df.to_string())
 
         args = parser.parse_args()
 
         user = args.get("UserID")
-        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
+        df_log = pd.read_csv("log_file.csv", usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         # df_log.set_index(["ID"], inplace = True)
         get_time = time.asctime(time.localtime(time.time()))
         if df_log.empty:
@@ -793,7 +805,8 @@ class Houses(Resource):
             api.abort(404, "House {} doesn't exist".format(id))
 
         if df.loc[id, "UserID"] != user:
-            api.abort(403, "message: Sorry, you has no right to access house {}".format(id))
+            api.abort(
+                403, "message: Sorry, you has no right to access house {}".format(id))
 
         print("***************************************")
         # delete the house from dataset
@@ -801,24 +814,27 @@ class Houses(Resource):
         df.to_csv('user_houses.csv')
 
         return {"message": " House {} has been deleted successfully".format(id)}, 200
+
+
 log_parser = reqparse.RequestParser()  # initialize a request parser
 # use query parameters to pass username and password, this is for check this user whether has the right to do operation in the house information which he request
 # because only the owner of those house can have the right to access those house information and do operation.
 
-operation_list = ["login", "Register", "Predict", "Get the houses list of User-predicted","Delete the prediction data",
-                  "Get user Info","Update house Info","Delete user Info","Update user Info"]
+operation_list = ["login", "Register", "Predict", "Get the houses list of User-predicted", "Delete the prediction data",
+                  "Get user Info", "Update house Info", "Delete user Info", "Update user Info"]
 log_parser.add_argument('operation', choices=operation_list)
 @api.route("/APIUsage")
 class APIUsage(Resource):
     @api.response(404, "Error: Not Found Information")
     @api.response(200, " Successful request ")
     @api.doc(description="The information about API usage")
-    @api.expect(log_parser,validate=True)
+    @api.expect(log_parser, validate=True)
     @requires_auth
-    def get(self):   #show the usage info in a pie chart,every operation take a part
+    def get(self):  # show the usage info in a pie chart,every operation take a part
         args = log_parser.parse_args()
         log_operation = args.get("operation")
-        df_log = pd.read_csv('log_file.csv',usecols=["ID", "UserID", "Operation", "Time"])
+        df_log = pd.read_csv('log_file.csv', usecols=[
+                             "ID", "UserID", "Operation", "Time"])
         print(log_operation)
         print(df_log["Operation"])
         if log_operation in df_log["Operation"].values:
@@ -831,9 +847,11 @@ class APIUsage(Resource):
                 log_info["ID"] = idx
                 ret.append(log_info)
 
-            return ret,200
+            return ret, 200
         else:
             api.abort(404, "Operation {} doesn't exist".format(log_operation))
+
+# ===============================
 
 
 if __name__ == "__main__":
@@ -858,5 +876,10 @@ if __name__ == "__main__":
     # df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
     # df_user.set_index("UserID")
     # this file is used for storing the user's username and password
+    import time
+    while True:
+        try:
+            app.run(debug=True, host="192.168.8.18", port=15000)
 
-    app.run(debug=True)
+        except (Exception, SyntaxError):
+            time.sleep(0.5)
