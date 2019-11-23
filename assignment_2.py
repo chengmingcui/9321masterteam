@@ -469,46 +469,7 @@ class UserAccountsManage(Resource):
 
         return {"message": "Your account updated successfully"}, 200
 
-    @api.doc(description="User delete an account")
-    @api.response(404, "Error: Not Found Information")
-    @api.response(200, " Successful request ")
-    @requires_auth
-    # @api.token_required
-    def delete(self, id):
-        # for user delete their account
-        df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
-        df_user.set_index(["UserID"], inplace=True)
 
-        if id not in df_user.index:
-            abort(404, message="User {} does not exist".format(id))
-
-        # drop the row with this username
-        # row = [index for index,row in df.iterrows() if row["Username"] == username]
-        df_user.drop(id, inplace=True)
-        df_user.to_csv("user_accounts.csv")
-
-        df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
-        df_log.set_index(["ID"], inplace = True)
-        print(df_log.to_string())
-        get_time = time.asctime(time.localtime(time.time()))
-        if df_log.empty:
-            last_index = 0
-        else:
-            # last_file = df_log.tail(1)
-            # print(int(last_file["ID"].values))
-            # print(last_file.index)
-            # last_index = int(last_file["ID"].values) + 1
-            last_index = df_log.index[-1]+1
-        logID = last_index
-        #df_log.loc[logID, "ID"] = last_index
-        df_log.loc[logID, "UserID"] = id
-        df_log.loc[logID, "Operation"] = "Delete user Info"
-        df_log.loc[logID, "Time"] = get_time
-        print(df_log.to_string())
-        df_log.to_csv("log_file.csv")
-
-
-        return {"message": "Account delete successfully"}, 200
 
 
 parser = reqparse.RequestParser()  # initialize a request parser
@@ -894,7 +855,7 @@ log_parser = reqparse.RequestParser()  # initialize a request parser
 # because only the owner of those house can have the right to access those house information and do operation.
 
 operation_list = ["login", "Register", "Predict", "Get the houses list of User-predicted","Delete the prediction data",
-                  "Get user Info","Update house Info","Delete user Info","Update user Info","Get graph of houses price information"]
+                  "Get user Info","Update house Info","Update user Info","Get graph of houses price information"]
 log_parser.add_argument('operation', choices=operation_list)
 @api.route("/APIUsage")
 class APIUsage(Resource):
