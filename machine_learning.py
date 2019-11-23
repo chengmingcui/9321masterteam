@@ -64,7 +64,7 @@ def data_processing(input):
     suburb_to_flag = pd.read_csv('suburbFlat.csv')
     type_to_flag = pd.read_csv('typeFlat.csv')
     dict_region = region_to_flag.set_index('Region')['flat'].to_dict()
-    dict_street = street_to_flag.set_index('strees')['flat'].to_dict()
+    dict_street = street_to_flag.set_index('street')['flat'].to_dict()
     dict_suburb = suburb_to_flag.set_index('suburb')['flat'].to_dict()
     dict_type = type_to_flag.set_index('Type')['flat'].to_dict()
 
@@ -93,44 +93,47 @@ def data_processing(input):
     output = input.drop(cols_to_drop, axis=1)
 
     return output
-
-if __name__ == "__main__":
-    raw_data = {"Identifier":1,
-                "UserID": 9,
-                "Distance": 12,
-                "Badroom2": 2,
-                "Bathroom": 1,
-                "Car": 1,
-                "Landsize": 100,
-                "BuildingArea": 90,
-                "YearBuilt": 2008,
-                "Lattitude": 130,
-                "Longtitude": 130,
-                "Suburb": "Gelnroy",
-                "Street": "William St",
-                "Type": "t",
-                "Regionname": "Northern Metropolitan"
-                }
-    df1 = pd.DataFrame(
-        columns=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize", "BuildingArea",
-                 "YearBuilt", "Lattitude",
-                 "Longtitude", "Suburb", "Street", "Type", "Regionname"])
-
-
-    # put the value into the dataset
-    for key in raw_data:
-        df1.loc[0, key] = raw_data[key]
-
-
-    print(df1.to_string())
-    df = pd.read_csv("user_houses.csv", usecols=["Identifier", "UserID", "Distance", "Badroom2", "Bathroom", "Car", "Landsize", "BuildingArea",
-                 "YearBuilt", "Lattitude",
-                 "Longtitude", "Suburb", "Street", "Type", "Regionname"])
-    print(df.to_string())
-    df =df.append(df1, ignore_index= True)
-    print(df.to_string())
-    # df1 =machine_learning(df)
-    # print(df1.to_string())
-    # print(df1.loc[1,"Price"])
+#
+# if __name__ == "__main__":
+#     # raw_data = {"Identifier":1,
+#     #             "UserID": 9,
+#     #             "Distance": 12,
+#     #             "Badroom2": 2,
+#     #             "Bathroom": 1,
+#     #             "Car": 1,
+#     #             "Landsize": 100,
+#     #             "BuildingArea": 90,
+#     #             "YearBuilt": 2008,
+#     #             "Lattitude": 130,
+#     #             "Longtitude": 130,
+#     #             "Suburb": "Gelnroy",
+#     #             "Street": "William St",
+#     #             "Type": "t",
+#     #             "Regionname": "Northern Metropolitan"
+#     #             }
+#     # df1 = pd.DataFrame(
+#     #     columns=["Identifier", "UserID", "Distance", "Bedroom", "Bathroom", "Car", "Landsize", "BuildingArea",
+#     #              "YearBuilt", "Lattitude",
+#     #              "Longtitude", "Suburb", "Street", "Type", "Regionname"])
+#     #
+#     #
+#     # # put the value into the dataset
+#     # for key in raw_data:
+#     #     df1.loc[0, key] = raw_data[key]
+#
+#
+#     #print(df1.to_string())
+#     df = pd.read_csv("user_houses.csv", usecols=["Identifier", "UserID", "Distance", "Bedroom", "Bathroom", "Car", "Landsize", "BuildingArea",
+#                  "YearBuilt", "Lattitude",
+#                  "Longtitude", "Suburb", "Street", "Type", "Regionname"])
+#     print(df.to_string())
+#     #df =df.append(df1, ignore_index= True)
+#     #print(df.to_string())
+#     df1 =data_processing(df)
+#     print(df1.to_string())
+#     df1 = machine_learning(df1)
+#     print(df1.to_string())
+#     # print(df1.to_string())
+#     # print(df1.loc[1,"Price"])
 
 
