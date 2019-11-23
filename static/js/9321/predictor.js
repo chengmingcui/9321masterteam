@@ -6,15 +6,18 @@ request_add_token = function (request) {
         "API-TOKEN", "jalsdncoih2o342oisdcnvsl290384cvkjwmenzoxi2361298smndclzcse"
     );
 };
+set_cookie=function(user_id,username,token){
+    $.cookie("user_id", user_id, {"path": "/"});
+    $.cookie("username",username, {"path": "/"});
+    $.cookie("token", token, {"path": "/"});
+}
 sign_in = function () {
     console.debug("start sign in ");
     post_authentication_token(
         $("#username").val(),
         $("#password").val(),
         function (data) {
-            $.cookie(("user_id", data.user_id, {"path": "/"}));
-            $.cookie(("username", data.username, {"path": "/"}));
-            $.cookie(("token", data.token, {"path": "/"}));
+            set_cookie(data.user_id,data.username,data.token);
             window.location.replace("/index.html")
         }
     )
