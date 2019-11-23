@@ -10,7 +10,7 @@ def graph1 (year):
        return df1
    df1.plot.bar()
    plt.show()
-   return df
+   return df1
 
 
 
