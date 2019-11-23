@@ -362,12 +362,15 @@ class Graph(Resource):
             distance = args.get("distance")
             graph_df = dg.graph3(distance)
 
+        if graph_df.empty:
+            abort(400, message="Input is invalid")
+
         graph_json = graph_df.to_json(orient='index')
         graph = json.loads(graph_json)
         ret = []
         for idx in graph:
             g = graph[idx]
-            g["ID"] = idx
+            g["year"] = idx
             ret.append(g)
 
         return ret, 200
@@ -891,7 +894,7 @@ log_parser = reqparse.RequestParser()  # initialize a request parser
 # because only the owner of those house can have the right to access those house information and do operation.
 
 operation_list = ["login", "Register", "Predict", "Get the houses list of User-predicted","Delete the prediction data",
-                  "Get user Info","Update house Info","Delete user Info","Update user Info"]
+                  "Get user Info","Update house Info","Delete user Info","Update user Info","Get graph of houses price information"]
 log_parser.add_argument('operation', choices=operation_list)
 @api.route("/APIUsage")
 class APIUsage(Resource):
