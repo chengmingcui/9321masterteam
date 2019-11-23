@@ -1,0 +1,9 @@
+#use conda
+ujson
+pandas
+flask
+scikit-learn
+matplotlib
+#use pip
+flask_restplus
+pyjwt
