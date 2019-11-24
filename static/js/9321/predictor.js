@@ -250,7 +250,7 @@ load_feature_range = function () {
     s = ""
 }
 
-get_house_table = function (user_id, on_success) {
+get_house_table = function (user_id, on_success,on_error) {
     $.ajax({
         "type": "GET",
         url: "/api/houses",
@@ -259,6 +259,7 @@ get_house_table = function (user_id, on_success) {
             UserID: user_id
         },
         success: on_success,
+        error:on_error,
     })
 }
 show_house_table_head_foot = function () {

@@ -29,3 +29,7 @@ Identifier,UserID,Distance,Bedroom,Bathroom,Car,Landsize,BuildingArea,YearBuilt,
 119.0,2.0,2.0,3.0,4.0,12.0,1.0,2.0,2.0,3.0,3.0,Richmond,Williams Rd,t,Western Victoria,936444.0
 123.0,9.0,2.0,3.0,1.0,2.0,3.0,4.0,5.0,111.0,22.0,Northcote,The Avenue,t,Western Metropolitan,927806.0
 124.0,9.0,2.0,3.0,1.0,2.0,3.0,4.0,5.0,111.0,22.0,Northcote,The Avenue,t,Western Metropolitan,914713.0
+999.0,1.0,100.0,2.0,3.0,4.0,1.0,1.0,2.0,3.0,4.0,South Yarra,Buckley St,h,Northern Victoria,926987.34
+1000.0,1.0,100.0,2.0,3.0,4.0,1.0,1.0,2.0,3.0,4.0,South Yarra,Buckley St,h,Northern Victoria,950941.0
+1001.0,1.0,100.0,2.0,3.0,4.0,1.0,1.0,2.0,3.0,4.0,South Yarra,Buckley St,h,Northern Victoria,954811.0
+1002.0,1.0,100.0,2.0,3.0,4.0,1.0,1.0,2.0,3.0,4.0,South Yarra,Buckley St,h,Northern Victoria,950560.0
