@@ -178,7 +178,7 @@ class Registration(Resource):
         # print(int(last_user["UserID"].values))
         # print(last_user.index)
         # last_index = int(last_user["UserID"].values) + 1
-
+   
         last_index = df_user.index[-1]+1
         # add this valid user account (username, password) into csv file
         userID = last_index  # user["UserID"]
