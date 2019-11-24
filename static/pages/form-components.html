@@ -372,14 +372,14 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="Latitude">Latitude</label>
-                                        <input type="text" class="form-control" id="Latitude"
+                                        <label for="Lattitude">Latitude</label>
+                                        <input type="text" class="form-control" id="Lattitude"
                                                placeholder="the latitude of your house. -38.2 to -37.4">
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="Longitude">Longitude</label>
-                                        <input type="text" class="form-control" id="Longitude"
+                                        <label for="Longtitude">Longitude</label>
+                                        <input type="text" class="form-control" id="Longtitude"
                                                placeholder="the longitude of your house. 144.5 to 145.6 ">
                                     </div>
 
@@ -395,10 +395,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="Type">Type</label>
-                                        <select class="form-control" id="Type">
-                                            <option>h</option>
-                                            <option>u</option>
-                                            <option>t</option>
+                                        <select class="form-control" id="Type" value="">
+                                            <option value="" selected disabled hidden></option>
+                                            <option value="h">TOWN HOUSE</option>
+                                            <option value="u">House</option>
+                                            <option value="t">Unit</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
@@ -407,8 +408,8 @@
                                         </select>
                                     </div>
 
-                                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                                    <button class="btn btn-light">Cancel</button>
+                                    <button class="btn btn-primary mr-2" type="button" onclick="predict_houses_price()">Submit</button>
+                                    <button class="btn btn-light" type="button" onclick="clear_predict_input()">Cancel</button>
                                 </form>
                             </div>
                         </div>

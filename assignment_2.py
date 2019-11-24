@@ -311,7 +311,7 @@ class Graph(Resource):
     @api.response(400, "Error: Invalid input")
     @api.response(200, "Success")
     @api.response(404, "Error: Not Found Information")
-    @requires_auth
+    # @requires_auth
     # @api.expect(parser1, validate=True)
     def get(self):
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
@@ -425,7 +425,7 @@ class UserAccountsManage(Resource):
     @api.response(403, "Error: No Right to access data")
     @api.doc(description="User can update its account information about username and password")
     @api.expect(user_model)
-    @requires_auth
+    # @requires_auth
     def put(self, id):
         get_time = time.asctime(time.localtime(time.time()))
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
@@ -529,7 +529,7 @@ class HousesList(Resource):
     @api.response(200, "Success information retrieval.")
     @api.doc(description="User can get all houses information he or she has provided so far.")
     @api.expect(parser, validate=True)
-    @requires_auth
+    # @requires_auth
     # @api.token_required
     def get(self):
         # Since this get operation is for retrieval all houses information of a owner has provided yet, so the
@@ -717,7 +717,7 @@ class Houses(Resource):
     @api.response(200, " Successful request ")
     @api.doc(description=" Update information of a house by its Identifier, and return the new predict price")
     @api.expect(house_model)
-    @requires_auth
+    # @requires_auth
     # @api.token_required
     def put(self, id):
 
@@ -831,7 +831,7 @@ class Houses(Resource):
     @api.response(404, "Error: Not Found Information")
     @api.response(200, " Successful request ")
     @api.doc(description="Delete a house and its information from dataset")
-    @requires_auth
+    # @requires_auth
     # @api.token_required
     def delete(self, id):
 
@@ -900,7 +900,7 @@ class APIUsage(Resource):
     @api.response(200, " Successful request ")
     @api.doc(description="The information about API usage")
     @api.expect(log_parser, validate=True)
-    @requires_auth
+    # @requires_auth
     def get(self):  # show the usage info in a pie chart,every operation take a part
         args = log_parser.parse_args()
         log_operation = args.get("operation")
