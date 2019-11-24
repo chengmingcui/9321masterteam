@@ -27,3 +27,5 @@ Identifier,UserID,Distance,Bedroom,Bathroom,Car,Landsize,BuildingArea,YearBuilt,
 115.0,2.0,2.0,3.0,4.0,12.0,1.0,2.0,2.0,3.0,3.0,Bentleigh East,Dandenong Rd,h,Western Metropolitan,894723.0
 118.0,2.0,2.0,3.0,4.0,12.0,1.0,2.0,2.0,3.0,3.0,Richmond,Williams Rd,t,Western Victoria,902908.0
 119.0,2.0,2.0,3.0,4.0,12.0,1.0,2.0,2.0,3.0,3.0,Richmond,Williams Rd,t,Western Victoria,936444.0
+123.0,9.0,2.0,3.0,1.0,2.0,3.0,4.0,5.0,111.0,22.0,Northcote,The Avenue,t,Western Metropolitan,927806.0
+124.0,9.0,2.0,3.0,1.0,2.0,3.0,4.0,5.0,111.0,22.0,Northcote,The Avenue,t,Western Metropolitan,914713.0
