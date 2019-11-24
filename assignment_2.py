@@ -774,7 +774,7 @@ class Houses(Resource):
         #
         # if user is not  df.loc[id, "UserID"]:
         #     abort(400, message="No permission to access the house information")
-        print("没有更新房子信息之前的：")
+        #print("没有更新房子信息之前的：")
         print(df.to_string())
         if "Identifier" in house and id != house["Identifier"]:
             return {"message": "House Identifier cannot be changed."}, 400
@@ -806,7 +806,7 @@ class Houses(Resource):
             df.loc[id, key] = house[key]
             if str(key) != "Price":
                 df_predicted.loc[0, key] = house[key]
-        print("更新房子信息之后的：")
+        # print("更新房子信息之后的：")
         print(df.to_string())
         # recall the regression function to predict price
         # price = regression_function(df).loc[id, "Price"]
