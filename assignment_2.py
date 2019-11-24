@@ -88,7 +88,6 @@ def requires_auth(f):
 
 
 @api.route('/authentication-tokens')
-@api.route('/auth')
 class Authentication(Resource):
     @api.response(200, 'Successful')
     @api.doc(description="Generates a authentication token")
@@ -375,9 +374,13 @@ class Graph(Resource):
         graph_json = graph_df.to_json(orient='index')
         graph = json.loads(graph_json)
         ret = []
+
         for idx in graph:
             g = graph[idx]
-            g["year"] = idx
+            if graph_service == "graph3":
+                g["suburb"] = idx
+            else:
+                g["year"] = idx
             ret.append(g)
 
         return ret, 200
@@ -616,7 +619,6 @@ class HousesList(Resource):
         print(df.to_string())
         # since post new data for predict price, so accessing dataset here is test dataset
         # for user to provide  a new house and its details into dataset
-        print(request)
         house = request.json  # the content that post request provide
         df_log = pd.read_csv("log_file.csv", usecols=["ID", "UserID", "Operation", "Time"])
         df_log.set_index(["ID"], inplace=True)
@@ -755,12 +757,13 @@ class Houses(Resource):
             # print(last_file.index)
             last_index = df_log.index[-1] + 1
         logID = last_index
-        # df_log.loc[logID, "ID"] = last_index
+        #df_log.loc[logID, "ID"] = last_index
         df_log.loc[logID, "UserID"] = int(df.loc[id, "UserID"])
         df_log.loc[logID, "Operation"] = "Update house Info"
         df_log.loc[logID, "Time"] = get_time
         print(df_log.to_string())
         df_log.to_csv("log_file.csv")
+
 
         # for checking the user whether has the right to access the house information
         print("################User ID ###############")
@@ -889,40 +892,32 @@ log_parser = reqparse.RequestParser()  # initialize a request parser
 # use query parameters to pass username and password, this is for check this user whether has the right to do operation in the house information which he request
 # because only the owner of those house can have the right to access those house information and do operation.
 
-operation_list = ["login", "Register", "Predict", "Get the houses list of User-predicted", "Delete the prediction data",
-                  "Get user Info", "Update house Info", "Update user Info", "Get graph of houses price information"]
-log_parser.add_argument('operation', choices=operation_list)
-
-
 @api.route("/APIUsage")
 class APIUsage(Resource):
-    @api.response(404, "Error: Not Found Information")
     @api.response(200, " Successful request ")
     @api.doc(description="The information about API usage")
-    @api.expect(log_parser, validate=True)
     # @requires_auth
     def get(self):  # show the usage info in a pie chart,every operation take a part
-        args = log_parser.parse_args()
-        log_operation = args.get("operation")
         df_log = pd.read_csv('log_file.csv', usecols=["ID", "UserID", "Operation", "Time"])
         df_log.set_index("ID", inplace=True)
         print("###############df_log#############################")
-        print(df_log.to_string())
-        print(log_operation)
-        print(df_log["Operation"])
-        if log_operation in df_log["Operation"].values:
-            logs = df_log.query('Operation == @log_operation')
-            log_json = logs.to_json(orient='index')
-            log = json.loads(log_json)
-            ret = []
-            for idx in log:
-                log_info = log[idx]
-                log_info["ID"] = idx
-                ret.append(log_info)
-
-            return ret, 200
-        else:
-            api.abort(404, "Operation {} doesn't exist".format(log_operation))
+        operation_list = ["login", "Register", "Predict", "Get the houses list of User-predicted",
+                              "Delete the prediction data",
+                              "Get user Info", "Update house Info", "Update user Info",
+                              "Get graph of houses price information"]
+        total = df_log.shape[0]
+        ret = []
+        for p in operation_list:
+            logs = df_log.query('Operation == @p').values
+            logs_count = len(logs)
+            percentage = logs_count / total
+            percentage = round(percentage * 100, 2)
+            logs_dict = {}
+            logs_dict['Operation'] = p
+            logs_dict["Count"] = logs_count
+            logs_dict["Percentage"] = percentage
+            ret.append(logs_dict)
+        return ret, 200
 
 
 # for front end
