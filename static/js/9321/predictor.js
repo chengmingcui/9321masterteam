@@ -12,9 +12,12 @@ request_add_token = function (request) {
     );
 };
 set_cookie = function (user_id, username, token) {
-    $.cookie("user_id", user_id, {"path": "/"});
-    $.cookie("username", username, {"path": "/"});
-    $.cookie("token", token, {"path": "/"});
+    $.cookie("user_id", user_id, { "path": "/" });
+    $.cookie("username", username, { "path": "/" });
+    $.cookie("token", token, { "path": "/" });
+}
+function userid() {
+    return parseInt($.cookie("user_id"));
 }
 sign_in = function () {
     console.debug("start sign in ");
@@ -50,8 +53,8 @@ logout = function () {
     window.location.replace("/");
 }
 clean_cookie = function () {
-    $.removeCookie("user_id", {path: "/"});
-    $.removeCookie("username", {path: "/"})
+    $.removeCookie("user_id", { path: "/" });
+    $.removeCookie("username", { path: "/" })
 }
 register = function () {
     post_register(
@@ -166,52 +169,53 @@ parse_predict_data = function () {
 predict_houses_price = function () {
     data = parse_predict_data();
     $.ajax({
-            type: "POST",
-            url: "/api/houses",
-            data: JSON.stringify(data),
-            beforeSend: request_add_token,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (data) {
-                $("#PredictResultTable").prepend(
-                    "<tr>" +
-                    "<td><p>" + data.HouseID + "</p></td>" +
-                    "<td><p>$ " + data.price + "</p></td>" +
-                    "</tr>"
-                );
-                houseid = $("#Identifier");
-                houseid.val(parseInt(houseid.val()) + 1);
-                console.log(data);
-            },
-            error: function (jqXHR, error) {
-                if (jqXHR.status === 0) {
-                    alert('Not connect.\n Verify Network.');
-                } else if (jqXHR.status == 400) {
-                    alert(JSON.parse(jqXHR.responseText).message);
-                } else if (jqXHR.status == 404) {
-                    alert('Requested page not found. [404]');
-                } else if (jqXHR.status == 500) {
-                    alert('Internal Server Error [500].');
-                } else if (exception === 'parsererror') {
-                    alert('Requested JSON parse failed.');
-                } else if (exception === 'timeout') {
-                    alert('Time out error.');
-                } else if (exception === 'abort') {
-                    alert('Ajax request aborted.');
-                } else {
-                    alert('Uncaught Error.\n' + jqXHR.responseText);
-                }
+        type: "POST",
+        url: "/api/houses",
+        data: JSON.stringify(data),
+        beforeSend: request_add_token,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            $("#PredictResultTable").prepend(
+                "<tr>" +
+                "<td><p>" + data.HouseID + "</p></td>" +
+                "<td><p>$ " + data.price + "</p></td>" +
+                "</tr>"
+            );
+            houseid = $("#Identifier");
+            houseid.val(parseInt(houseid.val()) + 1);
+            console.log(data);
+        },
+        error: function (jqXHR, error) {
+            if (jqXHR.status === 0) {
+                alert('Not connect.\n Verify Network.');
+            } else if (jqXHR.status == 400) {
+                alert(JSON.parse(jqXHR.responseText).message);
+            } else if (jqXHR.status == 404) {
+                alert('Requested page not found. [404]');
+            } else if (jqXHR.status == 500) {
+                alert('Internal Server Error [500].');
+            } else if (exception === 'parsererror') {
+                alert('Requested JSON parse failed.');
+            } else if (exception === 'timeout') {
+                alert('Time out error.');
+            } else if (exception === 'abort') {
+                alert('Ajax request aborted.');
+            } else {
+                alert('Uncaught Error.\n' + jqXHR.responseText);
             }
         }
+    }
     )
-    ;
+        ;
     return false;
 }
-;
+    ;
 
-load_suburb=function(){
+load_suburb = function () {
     on_success = function (data) {
-        for (var v in  data["suburb"]) {
+        s = '<option value="all">ALL Suburb</option>'
+        for (var v in data["suburb"]) {
             s += "<option>" + data["suburb"][v] + "</option>" + "\n";
         }
         $("#Suburb").html(s)
@@ -223,19 +227,19 @@ load_suburb=function(){
 load_feature_range = function () {
     feature_range = {};
     on_success = function (data) {
-        for (var v in  data["suburb"]) {
+        for (var v in data["suburb"]) {
             s += "<option>" + data["suburb"][v] + "</option>" + "\n";
         }
         $("#Suburb").html(s)
             .val("")
         s = ""
-        for (var v in  data["street"]) {
+        for (var v in data["street"]) {
             s += "<option>" + data["street"][v] + "</option>" + "\n";
         }
         $("#Street").html(s)
             .val("")
         s = ""
-        for (var v in  data["region"]) {
+        for (var v in data["region"]) {
             s += "<option>" + data["region"][v] + "</option>" + "\n";
         }
         $("#Regionname").html(s)
@@ -302,3 +306,269 @@ show_house_table_data = function () {
 }
 
 // get_graph1_data()
+show_average_chart = function () {
+    parse_graph_data_and_draw = function (data) {
+        years = [];
+        prices = [];
+        $.each(data, function (i) {
+            prices.push(data[i].Price);
+            years.push(parseInt(data[i].year));
+        })
+        console.log(years);
+        console.log(prices);
+        drawChart(years, prices);
+    }
+    data = {};
+    if ($("#Suburb").val() == "all") {
+        data["graph service"] = "graph1"
+    } else {
+
+        data["graph service"] = "graph2";
+        data["suburb"] = $("#Suburb").val();
+    }
+
+    data["year"] = parseInt($("#Year").val())
+    data["UserID"] = userid();
+    $.ajax({
+        type: "GET",
+        url: "/api/graphs",
+        data: data,
+        success: parse_graph_data_and_draw
+    }
+
+    )
+    // $("#Suburb").val();
+
+}
+
+show_lowest_chart = function () {
+    parse_graph_data_and_draw = function (data) {
+        suburbs = [];
+        prices = [];
+        $.each(data, function (i) {
+            prices.push(data[i].Price);
+            suburbs.push(data[i].suburb);
+        })
+        // console.log(years);
+        // console.log(prices);
+        drawChart(suburbs, prices);
+    }
+    data = {};
+    data["graph service"] = "graph3";
+    data["distance"] = parseFloat($("#Distance").val());
+    data["UserID"] = userid();
+    $.ajax({
+        type: "GET",
+        url: "/api/graphs",
+        data: data,
+        success: parse_graph_data_and_draw,
+        error: function (xhr, err) {
+            alert(JSON.parse(xhr.responseText)["message"]);
+        }
+    }
+
+    )
+    // $("#Suburb").val();
+
+}
+
+drawChart = function (x, y) {
+    var dom = document.getElementById("myChart");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    var dataAxis = x;
+    var data = y;
+    var yMax = Math.max(data) * 1.2;
+    var dataShadow = [];
+
+    for (var i = 0; i < data.length; i++) {
+        dataShadow.push(yMax);
+    }
+
+    option = {
+        /*
+        title: {
+            text: '特性示例：渐变色 阴影 点击缩放',
+            subtext: 'Feature Sample: Gradient Color, Shadow, Click Zoom'
+        },*/
+        xAxis: {
+            data: dataAxis,
+            axisLabel: {
+                inside: true,
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            axisTick: {
+                show: false
+            },
+            axisLine: {
+                show: false
+            },
+            z: 10
+        },
+        yAxis: {
+            axisLine: {
+                show: false
+            },
+            axisTick: {
+                show: false
+            },
+            axisLabel: {
+                textStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        dataZoom: [
+            {
+                type: 'inside'
+            }
+        ],
+        series: [
+            { // For shadow
+                type: 'bar',
+                itemStyle: {
+                    normal: { color: 'rgba(0,0,0,0.05)' }
+                },
+                barGap: '-100%',
+                barCategoryGap: '40%',
+                data: dataShadow,
+                animation: false
+            },
+            {
+                type: 'bar',
+                itemStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(
+                            0, 0, 0, 1,
+                            [
+                                { offset: 0, color: '#83bff6' },
+                                { offset: 0.5, color: '#188df0' },
+                                { offset: 1, color: '#188df0' }
+                            ]
+                        )
+                    },
+                    emphasis: {
+                        color: new echarts.graphic.LinearGradient(
+                            0, 0, 0, 1,
+                            [
+                                { offset: 0, color: '#2378f7' },
+                                { offset: 0.7, color: '#2378f7' },
+                                { offset: 1, color: '#83bff6' }
+                            ]
+                        )
+                    }
+                },
+                data: data
+            }
+        ]
+    };
+
+    // Enable data zoom when user click bar.
+    var zoomSize = 6;
+    // myChart.on('click', function (params) {
+    //     console.log(dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)]);
+    //     myChart.dispatchAction({
+    //         type: 'dataZoom',
+    //         startValue: dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)],
+    //         endValue: dataAxis[Math.min(params.dataIndex + zoomSize / 2, data.length - 1)]
+    //     });
+    // });;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+}
+
+show_api_usage= function () {
+    parse_graph_data_and_draw = function (data) {
+        data2=[]
+        $.each(data, function (i) {
+            data2.push(
+                {
+                    value:data[i].Count,
+                    name:data[i].Operation,
+                }
+            )
+
+        })
+        draw_pie_chart(data2);
+    }
+    data = {};
+    data["graph service"] = "graph3";
+    data["distance"] = parseFloat($("#Distance").val());
+    data["UserID"] = userid();
+    $.ajax({
+        type: "GET",
+        url: "/api/APIUsage",
+        data: data,
+        success: parse_graph_data_and_draw,
+        error: function (xhr, err) {
+            alert(JSON.parse(xhr.responseText)["message"]);
+        }
+    }
+
+    )
+    // $("#Suburb").val();
+
+}
+
+draw_pie_chart = function (data) {
+    
+    var dom = document.getElementById("myChart");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    legend_data=[]
+    $.each(data,function(i){
+        legend_data.push(data[i].Operation);
+    })
+    option = {
+        title: {
+            text: 'API Usage',
+            // subtext: '纯属虚构',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            x: 'center',
+            y: 'bottom',
+            data: legend_data,
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                magicType: {
+                    show: true,
+                    type: ['pie', 'funnel']
+                },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        calculable: true,
+        series: [
+
+            {
+                name: '',
+                type: 'pie',
+                radius: [50, 200],
+                center: ['50%', '50%'],
+                roseType: 'radius',
+                data: data
+            }
+        ]
+    };
+    ;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+
+}
