@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 .idea/
 .vscode/
 # Byte-compiled / optimized / DLL files
@@ -29,3 +30,36 @@ venv.bak/
 # mkdocs documentation
 /site
 
+=======
+.idea/
+.vscode/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+>>>>>>> Stashed changes

@@ -11,3 +11,19 @@ Identifier,UserID,Distance,Bedroom,Bathroom,Car,Landsize,BuildingArea,YearBuilt,
 17.0,9.0,12.0,2.0,2.0,2.0,120.0,90.0,2000.0,120.0,30.0,Glenroy,William St,h,Northern Metropolitan,852657.0
 18.0,9.0,12.0,3.0,3.0,2.0,150.0,120.0,2000.0,120.0,120.0,The Basin,High St,h,Western Victoria,933323.0
 20.0,9.0,10.0,3.0,3.0,2.0,150.0,120.0,2000.0,120.0,120.0,The Basin,High St,h,Western Victoria,920078.0
+10.0,0.0,10.0,3.0,3.0,3.0,100.0,100.0,1997.0,-38.0,144.0,Reservoir,Barkly St,h,Southern Metropolitan,976516.0
+11.0,0.0,10.0,3.0,3.0,3.0,100.0,100.0,1997.0,-38.0,144.0,Reservoir,Barkly St,h,Southern Metropolitan,959129.0
+19.0,0.0,100.0,3.0,2.0,1.0,20.0,20.0,1200.0,-38.4,144.5,Reservoir,Barkly St,h,Southern Metropolitan,914279.34
+32.0,0.0,100.0,3.0,2.0,1.0,20.0,20.0,1200.0,-38.4,144.5,Reservoir,Barkly St,h,Southern Metropolitan,904467.0
+33.0,0.0,100.0,3.0,2.0,1.0,20.0,20.0,1200.0,-38.4,144.5,Reservoir,Barkly St,h,Southern Metropolitan,915204.0
+34.0,0.0,100.0,3.0,2.0,1.0,20.0,20.0,1200.0,-38.4,144.5,Reservoir,Barkly St,h,Southern Metropolitan,876912.0
+35.0,0.0,100.0,3.0,2.0,1.0,20.0,20.0,1200.0,-38.4,144.5,Reservoir,Barkly St,h,Southern Metropolitan,896398.0
+36.0,0.0,100.0,3.0,2.0,1.0,20.0,20.0,1200.0,-38.4,144.5,Reservoir,Barkly St,h,Southern Metropolitan,871831.0
+37.0,0.0,100.0,3.0,2.0,1.0,20.0,20.0,1200.0,-38.4,144.5,Reservoir,Barkly St,h,Southern Metropolitan,962372.76
+38.0,0.0,100.0,3.0,2.0,1.0,20.0,20.0,1200.0,-38.4,144.5,Reservoir,Barkly St,h,Southern Metropolitan,891475.68
+39.0,0.0,100.0,3.0,2.0,1.0,20.0,20.0,1200.0,-38.4,144.5,Reservoir,Barkly St,h,Southern Metropolitan,819042.0
+111.0,2.0,2.0,3.0,4.0,12.0,1.0,2.0,2.0,3.0,3.0,Coburg,North Rd,h,Eastern Metropolitan,979775.0
+114.0,2.0,2.0,3.0,4.0,12.0,1.0,2.0,2.0,3.0,3.0,Bentleigh East,Dandenong Rd,h,Western Metropolitan,880258.44
+115.0,2.0,2.0,3.0,4.0,12.0,1.0,2.0,2.0,3.0,3.0,Bentleigh East,Dandenong Rd,h,Western Metropolitan,894723.0
+118.0,2.0,2.0,3.0,4.0,12.0,1.0,2.0,2.0,3.0,3.0,Richmond,Williams Rd,t,Western Victoria,902908.0
+119.0,2.0,2.0,3.0,4.0,12.0,1.0,2.0,2.0,3.0,3.0,Richmond,Williams Rd,t,Western Victoria,936444.0
