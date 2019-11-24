@@ -1,0 +1,726 @@
+{
+    "swagger":"2.0",
+    "basePath":"\/api",
+    "paths":{
+        "\/APIUsage":{
+            "get":{
+                "responses":{
+                    "200":{
+                        "description":" Successful request "
+                    }
+                },
+                "description":"The information about API usage",
+                "operationId":"get_api_usage",
+                "tags":[
+                    "Houses"
+                ]
+            }
+        },
+        "\/authentication-tokens":{
+            "post":{
+                "responses":{
+                    "200":{
+                        "description":"Successful"
+                    }
+                },
+                "description":"Generates a authentication token",
+                "operationId":"post_authentication",
+                "parameters":[
+                    {
+                        "name":"username",
+                        "in":"query",
+                        "type":"string",
+                        "required":true
+                    },
+                    {
+                        "name":"password",
+                        "in":"query",
+                        "type":"string",
+                        "required":true
+                    }
+                ],
+                "tags":[
+                    "Houses"
+                ]
+            }
+        },
+        "\/graphs":{
+            "get":{
+                "responses":{
+                    "404":{
+                        "description":"Error: Not Found Information"
+                    },
+                    "200":{
+                        "description":"Success"
+                    },
+                    "400":{
+                        "description":"Error: Invalid input"
+                    }
+                },
+                "operationId":"get_graph",
+                "parameters":[
+                    {
+                        "name":"graph service",
+                        "in":"query",
+                        "type":"string",
+                        "required":true,
+                        "enum":[
+                            "graph1",
+                            "graph2",
+                            "graph3"
+                        ],
+                        "collectionFormat":"multi",
+                        "description":"Graph1 : present the average house prices in the time range [input_year - 5, input_year +5],please submit year\nGraph2 : present the average house prices in a particular suburb in time range [input_year-5, input_year +5],please submit suburb name and year\nGraph3 : present the top 5 lowest house prices suburb and distance less than the input distance,please submit distance."
+                    },
+                    {
+                        "name":"suburb",
+                        "in":"query",
+                        "type":"string",
+                        "enum":[
+                            "Reservoir",
+                            "Richmond",
+                            "Brunswick",
+                            "Bentleigh East",
+                            "Coburg",
+                            "Essendon",
+                            "Preston",
+                            "Hawthorn",
+                            "Yarraville",
+                            "Glenroy",
+                            "Glen Iris",
+                            "Pascoe Vale",
+                            "Moonee Ponds",
+                            "St Kilda",
+                            "Kew",
+                            "Carnegie",
+                            "Footscray",
+                            "South Yarra",
+                            "Brighton",
+                            "Northcote",
+                            "Balwyn North",
+                            "Elwood",
+                            "Port Melbourne",
+                            "Ascot Vale",
+                            "Newport",
+                            "Brighton East",
+                            "Thornbury",
+                            "Brunswick West",
+                            "Camberwell",
+                            "Malvern East",
+                            "Prahran",
+                            "Bentleigh",
+                            "Keilor East",
+                            "Maribyrnong",
+                            "Kensington",
+                            "Surrey Hills",
+                            "Doncaster",
+                            "Balwyn",
+                            "Hawthorn East",
+                            "Hampton",
+                            "West Footscray",
+                            "Williamstown",
+                            "Fawkner",
+                            "Sunshine West",
+                            "Templestowe Lower",
+                            "Maidstone",
+                            "Ormond",
+                            "Ivanhoe",
+                            "Armadale",
+                            "Brunswick East",
+                            "Sunshine",
+                            "North Melbourne",
+                            "South Melbourne",
+                            "Elsternwick",
+                            "Toorak",
+                            "Collingwood",
+                            "Burwood",
+                            "Fitzroy North",
+                            "Moorabbin",
+                            "Heidelberg Heights",
+                            "Ashburton",
+                            "Murrumbeena",
+                            "Airport West",
+                            "Seddon",
+                            "Abbotsford",
+                            "Craigieburn",
+                            "Niddrie",
+                            "Hadfield",
+                            "Flemington",
+                            "Oak Park",
+                            "Malvern",
+                            "Fitzroy",
+                            "Altona",
+                            "Albert Park",
+                            "Melbourne",
+                            "Bulleen",
+                            "Werribee",
+                            "Box Hill",
+                            "Strathmore",
+                            "Ashwood",
+                            "Coburg North",
+                            "Altona North",
+                            "Fairfield",
+                            "Braybrook",
+                            "Avondale Heights",
+                            "Windsor",
+                            "Epping",
+                            "Watsonia",
+                            "Oakleigh South",
+                            "Canterbury",
+                            "Rosanna",
+                            "Oakleigh",
+                            "Aberfeldie",
+                            "Sunshine North",
+                            "Heidelberg West",
+                            "Clifton Hill",
+                            "Caulfield South",
+                            "Kingsville",
+                            "Hughesdale",
+                            "Chadstone",
+                            "Sunbury",
+                            "Mount Waverley",
+                            "Mill Park",
+                            "Heidelberg",
+                            "Southbank",
+                            "Albion",
+                            "Glen Waverley",
+                            "Kew East",
+                            "Viewbank",
+                            "Cheltenham",
+                            "Carlton",
+                            "West Melbourne",
+                            "Caulfield North",
+                            "Lalor",
+                            "Greensborough",
+                            "Gowanbrae",
+                            "Eaglemont",
+                            "Middle Park",
+                            "Spotswood",
+                            "Bundoora",
+                            "Doncaster East",
+                            "Jacana",
+                            "Croydon",
+                            "Sandringham",
+                            "Mont Albert",
+                            "Yallambie",
+                            "Alphington",
+                            "Mitcham",
+                            "Mulgrave",
+                            "Hoppers Crossing",
+                            "Balaclava",
+                            "Ivanhoe East",
+                            "Carlton North",
+                            "Meadow Heights",
+                            "South Morang",
+                            "Keilor Park",
+                            "Cremorne",
+                            "St Albans",
+                            "Parkdale",
+                            "Essendon West",
+                            "Dingley Village",
+                            "Mentone",
+                            "Hampton East",
+                            "Ferntree Gully",
+                            "Thomastown",
+                            "South Kingsville",
+                            "Eltham",
+                            "Seaford",
+                            "Essendon North",
+                            "Hillside",
+                            "Highett",
+                            "Wantirna South",
+                            "Greenvale",
+                            "Bayswater",
+                            "Point Cook",
+                            "Melton",
+                            "Parkville",
+                            "Ringwood East",
+                            "Broadmeadows",
+                            "Templestowe",
+                            "Williamstown North",
+                            "Frankston South",
+                            "Roxburgh Park",
+                            "Melton South",
+                            "Blackburn",
+                            "Boronia",
+                            "Kealba",
+                            "Nunawading",
+                            "Frankston",
+                            "Eltham North",
+                            "Vermont",
+                            "Donvale",
+                            "Mordialloc",
+                            "Glen Huntly",
+                            "Forest Hill",
+                            "Keilor Downs",
+                            "Carrum Downs",
+                            "Ringwood",
+                            "Tarneit",
+                            "Noble Park",
+                            "Berwick",
+                            "Clayton",
+                            "Tullamarine",
+                            "Heathmont",
+                            "Dandenong North",
+                            "Rowville",
+                            "Oakleigh East",
+                            "East Melbourne",
+                            "Blackburn South",
+                            "Keysborough",
+                            "Taylors Hill",
+                            "Melton West",
+                            "Edithvale",
+                            "Bellfield",
+                            "Montmorency",
+                            "Travancore",
+                            "Caroline Springs",
+                            "Burwood East",
+                            "Mooroolbark",
+                            "Kingsbury",
+                            "Wheelers Hill",
+                            "Blackburn North",
+                            "Gladstone Park",
+                            "Keilor",
+                            "Beaumaris",
+                            "Taylors Lakes",
+                            "Gisborne",
+                            "Scoresby",
+                            "Burnley",
+                            "Briar Hill",
+                            "Brooklyn",
+                            "Westmeadows",
+                            "Kings Park",
+                            "Vermont South",
+                            "Croydon North",
+                            "Bayswater North",
+                            "Deer Park",
+                            "Diamond Creek",
+                            "Delahey",
+                            "Frankston North",
+                            "Carrum",
+                            "Caulfield",
+                            "Gardenvale",
+                            "Black Rock",
+                            "Bonbeach",
+                            "Doveton",
+                            "Chelsea Heights",
+                            "Sydenham",
+                            "Endeavour Hills",
+                            "Watsonia North",
+                            "Kurunjang",
+                            "Cairnlea",
+                            "Clayton South",
+                            "Huntingdale",
+                            "Aspendale",
+                            "Wollert",
+                            "Chelsea",
+                            "Mernda",
+                            "Kilsyth",
+                            "Dandenong",
+                            "Wyndham Vale",
+                            "Clarinda",
+                            "Ripponlea",
+                            "Strathmore Heights",
+                            "Altona Meadows",
+                            "Ringwood North",
+                            "Coolaroo",
+                            "Springvale",
+                            "Burnside Heights",
+                            "Ardeer",
+                            "Caulfield East",
+                            "Narre Warren",
+                            "Croydon Hills",
+                            "Doreen",
+                            "Seaholme",
+                            "St Helena",
+                            "Hampton Park",
+                            "Pakenham",
+                            "Mount Evelyn",
+                            "Wantirna",
+                            "Princes Hill",
+                            "Notting Hill",
+                            "Albanvale",
+                            "Truganina",
+                            "Langwarrin",
+                            "North Warrandyte",
+                            "Dallas",
+                            "Riddells Creek",
+                            "Waterways",
+                            "Yarra Glen",
+                            "Sandhurst",
+                            "Hurstbridge",
+                            "McKinnon",
+                            "Williams Landing",
+                            "Diggers Rest",
+                            "The Basin",
+                            "Cranbourne North",
+                            "Healesville",
+                            "Springvale South",
+                            "Hallam",
+                            "Beaconsfield Upper",
+                            "Wallan",
+                            "Skye",
+                            "Montrose",
+                            "Deepdene",
+                            "Knoxfield",
+                            "Emerald",
+                            "Plumpton",
+                            "Campbellfield",
+                            "Cranbourne",
+                            "Brookfield",
+                            "Seabrook",
+                            "Whittlesea",
+                            "Beaconsfield",
+                            "Lower Plenty",
+                            "Burnside",
+                            "Kooyong",
+                            "Warrandyte",
+                            "Derrimut",
+                            "Chirnside Park"
+                        ],
+                        "collectionFormat":"multi",
+                        "description":"The suburb name in Melbourne"
+                    },
+                    {
+                        "name":"year",
+                        "in":"query",
+                        "type":"number",
+                        "description":"The year when houses built"
+                    },
+                    {
+                        "name":"distance",
+                        "in":"query",
+                        "type":"number",
+                        "description":"The distance from house to CBD"
+                    },
+                    {
+                        "name":"UserID",
+                        "in":"query",
+                        "type":"integer",
+                        "required":true,
+                        "description":null
+                    }
+                ],
+                "tags":[
+                    "Houses"
+                ]
+            }
+        },
+        "\/houses":{
+            "get":{
+                "responses":{
+                    "200":{
+                        "description":"Success information retrieval."
+                    },
+                    "404":{
+                        "description":"Error: Not Found Information"
+                    }
+                },
+                "description":"User can get all houses information he or she has provided so far.",
+                "operationId":"get_houses_list",
+                "parameters":[
+                    {
+                        "name":"order",
+                        "in":"query",
+                        "type":"string",
+                        "enum":[
+                            "Distance",
+                            "Landsize",
+                            "BuildingArea",
+                            "YearBuilt"
+                        ],
+                        "collectionFormat":"multi"
+                    },
+                    {
+                        "name":"ascending",
+                        "in":"query",
+                        "type":"boolean"
+                    },
+                    {
+                        "name":"UserID",
+                        "in":"query",
+                        "type":"integer",
+                        "required":true
+                    }
+                ],
+                "tags":[
+                    "Houses"
+                ]
+            },
+            "post":{
+                "responses":{
+                    "400":{
+                        "description":"Error: Invalidate request"
+                    },
+                    "200":{
+                        "description":" Successful request "
+                    }
+                },
+                "description":"Add a new house information, and return the predict price",
+                "operationId":"post_houses_list",
+                "parameters":[
+                    {
+                        "name":"payload",
+                        "required":true,
+                        "in":"body",
+                        "schema":{
+                            "$ref":"#\/definitions\/House"
+                        }
+                    }
+                ],
+                "tags":[
+                    "Houses"
+                ]
+            }
+        },
+        "\/houses\/{id}":{
+            "parameters":[
+                {
+                    "type":"integer",
+                    "in":"query",
+                    "description":"The user ID",
+                    "name":"UserID"
+                },
+                {
+                    "in":"path",
+                    "description":"The house identifier",
+                    "name":"id",
+                    "required":true,
+                    "type":"integer"
+                }
+            ],
+            "delete":{
+                "responses":{
+                    "200":{
+                        "description":" Successful request "
+                    },
+                    "404":{
+                        "description":"Error: Not Found Information"
+                    },
+                    "403":{
+                        "description":"Error: No Right to access data "
+                    }
+                },
+                "description":"Delete a house and its information from dataset",
+                "operationId":"delete_houses",
+                "tags":[
+                    "Houses"
+                ]
+            },
+            "put":{
+                "responses":{
+                    "200":{
+                        "description":" Successful request "
+                    },
+                    "404":{
+                        "description":"Error: Not Found Information"
+                    },
+                    "400":{
+                        "description":"Error: Invalidate request"
+                    },
+                    "403":{
+                        "description":"Error: No Right to access data"
+                    }
+                },
+                "description":"Update information of a house by its Identifier, and return the new predict price",
+                "operationId":"put_houses",
+                "parameters":[
+                    {
+                        "name":"payload",
+                        "required":true,
+                        "in":"body",
+                        "schema":{
+                            "$ref":"#\/definitions\/House"
+                        }
+                    }
+                ],
+                "tags":[
+                    "Houses"
+                ]
+            }
+        },
+        "\/users":{
+            "post":{
+                "responses":{
+                    "200":{
+                        "description":"Success registration"
+                    },
+                    "400":{
+                        "description":"Invalid username or password"
+                    }
+                },
+                "operationId":"post_registration",
+                "parameters":[
+                    {
+                        "name":"payload",
+                        "required":true,
+                        "in":"body",
+                        "schema":{
+                            "$ref":"#\/definitions\/User"
+                        }
+                    }
+                ],
+                "tags":[
+                    "Houses"
+                ]
+            }
+        },
+        "\/users\/{id}":{
+            "parameters":[
+                {
+                    "name":"id",
+                    "in":"path",
+                    "required":true,
+                    "type":"integer"
+                }
+            ],
+            "put":{
+                "responses":{
+                    "403":{
+                        "description":"Error: No Right to access data"
+                    },
+                    "200":{
+                        "description":"Success Update"
+                    },
+                    "400":{
+                        "description":"Error: Invalidate request"
+                    },
+                    "404":{
+                        "description":"Error: Not Found Information"
+                    }
+                },
+                "description":"User can update its account information about username and password",
+                "operationId":"put_user_accounts_manage",
+                "parameters":[
+                    {
+                        "name":"payload",
+                        "required":true,
+                        "in":"body",
+                        "schema":{
+                            "$ref":"#\/definitions\/User"
+                        }
+                    }
+                ],
+                "tags":[
+                    "Houses"
+                ]
+            },
+            "get":{
+                "responses":{
+                    "200":{
+                        "description":"Success information retrieval."
+                    },
+                    "404":{
+                        "description":"Error: Not Found Information"
+                    }
+                },
+                "operationId":"get_user_accounts_manage",
+                "tags":[
+                    "Houses"
+                ]
+            }
+        }
+    },
+    "info":{
+        "title":"Melbourne House price dataset",
+        "version":"1.0",
+        "description":"This API aims to predict the house price in Melbourne Australia.\n Once you provide some details about your house, a predict price of yourhouse would be provided to you immediately !"
+    },
+    "produces":[
+        "application\/json"
+    ],
+    "consumes":[
+        "application\/json"
+    ],
+    "securityDefinitions":{
+        "Token-Based":{
+            "type":"apiKey",
+            "name":"API-TOKEN",
+            "in":"header"
+        }
+    },
+    "security":[
+        {
+            "Token-Based":[
+
+            ]
+        }
+    ],
+    "tags":[
+        {
+            "name":"Houses",
+            "description":"api"
+        }
+    ],
+    "definitions":{
+        "User":{
+            "properties":{
+                "Username":{
+                    "type":"string"
+                },
+                "Password":{
+                    "type":"string"
+                }
+            },
+            "type":"object"
+        },
+        "House":{
+            "properties":{
+                "Identifier":{
+                    "type":"integer"
+                },
+                "UserID":{
+                    "type":"integer"
+                },
+                "Distance":{
+                    "type":"number"
+                },
+                "Bedroom":{
+                    "type":"number"
+                },
+                "Bathroom":{
+                    "type":"number"
+                },
+                "Car":{
+                    "type":"number"
+                },
+                "Landsize":{
+                    "type":"number"
+                },
+                "BuildingArea":{
+                    "type":"number"
+                },
+                "YearBuilt":{
+                    "type":"number"
+                },
+                "Lattitude":{
+                    "type":"number"
+                },
+                "Longtitude":{
+                    "type":"number"
+                },
+                "Suburb":{
+                    "type":"string"
+                },
+                "Street":{
+                    "type":"string"
+                },
+                "Type":{
+                    "type":"string"
+                },
+                "Regionname":{
+                    "type":"string"
+                }
+            },
+            "type":"object"
+        }
+    },
+    "responses":{
+        "ParseError":{
+            "description":"When a mask can't be parsed"
+        },
+        "MaskError":{
+            "description":"When any error occurs on mask"
+        }
+    }
+}
