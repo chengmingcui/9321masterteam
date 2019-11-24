@@ -270,5 +270,6 @@ show_house_table_data = function () {
             tbody.append(new_tr);
         })
     })
-
 }
+
+get_graph1_data()

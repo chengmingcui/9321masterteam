@@ -311,7 +311,7 @@ class Graph(Resource):
     @api.response(400, "Error: Invalid input")
     @api.response(200, "Success")
     @api.response(404, "Error: Not Found Information")
-    # @requires_auth
+    @requires_auth
     # @api.expect(parser1, validate=True)
     def get(self):
         df_user = pd.read_csv("user_accounts.csv", usecols=["UserID", "Username", "Password"])
